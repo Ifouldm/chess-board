@@ -1,0 +1,41 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.board {
+    margin: 0;
+    display: grid;
+    height: 90vmin;
+    width: 90vmin;
+    margin: 5vmin;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    border: 5px solid black;
+}
+
+.square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2vmin;
+}
+
+.square.black {
+    background-color: black;
+    color: white;
+}
+
+.square.white {
+    background-color: white;
+    color: black;
+}
