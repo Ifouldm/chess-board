@@ -6,11 +6,12 @@ const app = document.getElementById('app');
 
 var chess = new Chess();
 const chessBoard = new Board(chess);
-
+app.appendChild(chessBoard.element);
 const moves = new Moves(chess);
 
-chess.move(moves[0]);
-
-chessBoard.update();
-
-app.appendChild(chessBoard.element);
+moves.update();
+console.log(chess);
+while (!chess.game_over()) {
+    chess.move(chess.moves()[0]);
+    chessBoard.update();
+}
