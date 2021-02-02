@@ -19,13 +19,10 @@ class Square {
         this.isDark = sqColor === 'dark';
         this.element.classList.add('square', sqColor);
         this.pieceIcon = document.createElement('img');
+        this.element.appendChild(this.pieceIcon);
         this.pieceIcon.style.display = 'none';
-        if(piece) {
-            this.pieceIcon.src = './assets/'+pieces[piece.type+piece.color];
-            this.pieceIcon.classList.add('piece');
-            this.element.appendChild(this.pieceIcon);
-            this.pieceIcon.style.display = 'block';
-        }
+        this.pieceIcon.classList.add('piece');
+        this.update(piece);
         //this.element.textContent = ref;
     }
 
@@ -36,7 +33,6 @@ class Square {
         } else {
             this.pieceIcon.style.display = 'none';
         }
-
     }
 }
 
