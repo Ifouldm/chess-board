@@ -18,20 +18,25 @@ class Square {
         this.pos = pos;
         this.isDark = sqColor === 'dark';
         this.element.classList.add('square', sqColor);
-        this.pieceIcon = document.createElement('img');
-        this.element.appendChild(this.pieceIcon);
-        this.pieceIcon.style.display = 'none';
-        this.pieceIcon.classList.add('piece');
+        this.element.id = pos;
+        this.piece = document.createElement('img');
+        this.element.appendChild(this.piece);
+        this.piece.style.display = 'none';
+        this.piece.classList.add('piece');
         this.update(piece);
+        function dragAction(event) {
+            console.log(event, pos);
+        }
+        this.piece.addEventListener('dragend', dragAction)
         //this.element.textContent = ref;
     }
 
     update(piece) {
         if (piece) {
-            this.pieceIcon.src = './assets/'+pieces[piece.type+piece.color];
-            this.pieceIcon.style.display = 'block';
+            this.piece.src = './assets/'+pieces[piece.type+piece.color];
+            this.piece.style.display = 'block';
         } else {
-            this.pieceIcon.style.display = 'none';
+            this.piece.style.display = 'none';
         }
     }
 }

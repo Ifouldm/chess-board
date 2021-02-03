@@ -13,14 +13,13 @@ body {
 }
 
 .board {
-    margin: 0;
     display: grid;
     height: 90vmin;
     width: 90vmin;
     margin: 5vmin;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
-    border: 5px solid black;
+    border: 8px solid black;
 }
 
 .square {

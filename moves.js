@@ -4,7 +4,7 @@ class Moves {
     }
 
     update(){
-        let moves = this.chess.moves();
+        const moves = this.chess.moves();
     }
 }
 

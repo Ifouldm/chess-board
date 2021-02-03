@@ -11,7 +11,20 @@ const moves = new Moves(chess);
 
 moves.update();
 console.log(chess);
-while (!chess.game_over()) {
-    chess.move(chess.moves()[0]);
-    chessBoard.update();
+
+const timer = setInterval(playMove, 1000);
+
+function playMove() {    
+    if (chess.turn() === 'b') {
+        chess.move(chess.moves()[0]);
+        chessBoard.update();
+    }
+    if (chess.game_over()) {
+        clearInterval(timer);
+        console.log('Game Over');
+    }
 }
+
+
+//clearInterval(timer);
+
