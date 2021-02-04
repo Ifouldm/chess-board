@@ -1,13 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Board</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div id="app"></div>
+    <div id="toolbar" class="toolbar">
+        <div class="row">
+            <label for="status">Status: </label>
+            <input type="text" class="text" name="status" id="status" readonly>
+        </div>
+        <div class="row">
+            <button id=resetButton class="button">Reset</button>
+        </div>
+        <div class="row"><label for="turn">Turn: </label>
+            <div id="turn"></div>
+        </div>
+        <div class="row">
+            <label for="history">Moves: </label>
+            <div class="scrollableArea">
+                <ol id="history" reversed class="history"></ol>
+            </div>
+        </div>
+        <div class="row">
+            <label for="computer">Computer: </label>
+            <input id="computer" type="checkbox" />
+        </div>
+        <div class="row">
+            Promotion choice:
+        </div>
+        <div class="row">
+            <div id=promotion>
+                <label for="bishop">
+                    <input class="selection" type="radio" id="bishop" name="promotion" value="b">
+                    <img src="./assets/Chess_bdt45.svg">
+                </label>
+                <label for="knight">
+                    <input class="selection" type="radio" id="knight" name="promotion" value="n">
+                    <img src="./assets/Chess_ndt45.svg">
+                </label>
+                <label for="rook">
+                    <input class="selection" type="radio" id="rook" name="promotion" value="r">
+                    <img src="./assets/Chess_rdt45.svg">
+                </label>
+                <label for="queen">
+                    <input class="selection" type="radio" id="queen" checked name="promotion" value="q">
+                    <img src="./assets/Chess_qdt45.svg">
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <button id=concedeButton class="button">Concede</button>
+        </div>
+        <div class="row">
+            <button id=offerDrawButton class="button">Offer Draw</button>
+        </div>
+    </div>
     <script type="module" src="app.js"></script>
 </body>
+
 </html>

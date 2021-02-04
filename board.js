@@ -1,7 +1,9 @@
 import Square from './square.js';
 
 class Board {
-    constructor(chess) {
+    constructor(chess, updatefn) {
+        this.promotion = 'q';
+        this.updatefn = updatefn;
         this.chess = chess;
         this.element = document.createElement('div');
         this.element.classList.add('board');
@@ -16,9 +18,13 @@ class Board {
             let file = 7- Math.floor(i / 8) + 1;
             let pos = ''+rank+file;
             let piece = this.chess.get(pos);
-            this.squares[i] = new Square(piece, pos, this.chess.square_color(pos));
+            this.squares[i] = new Square(this.chess, this, piece, pos, this.chess.square_color(pos));
             this.element.appendChild(this.squares[i].element);
         }
+    }
+
+    changePromotion(promotion) {
+        this.promotion = promotion;
     }
 
     update() {

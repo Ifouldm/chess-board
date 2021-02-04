@@ -13,22 +13,60 @@ const pieces = {
     'rw': 'Chess_rlt45.svg',
 }
 class Square {
-    constructor(piece, pos, sqColor) {
+    constructor(chess, board, piece, pos, sqColor) {
+        this.chess = chess;
+        this.board = board;
         this.element = document.createElement('div');
-        this.pos = pos;
         this.isDark = sqColor === 'dark';
         this.element.classList.add('square', sqColor);
         this.element.id = pos;
         this.piece = document.createElement('img');
+        this.addEventListeners(pos);
+        this.pos = pos;
         this.element.appendChild(this.piece);
+        this.piece.draggable = true;
         this.piece.style.display = 'none';
         this.piece.classList.add('piece');
         this.update(piece);
-        function dragAction(event) {
-            console.log(event, pos);
-        }
-        this.piece.addEventListener('dragend', dragAction)
-        //this.element.textContent = ref;
+    }
+
+    addEventListeners(pos){
+        this.element.addEventListener("dragstart", function( event ) {
+            event.dataTransfer.setData('text/plain', pos);
+        }, false);
+        this.element.addEventListener('dragover', (event) => {
+            event.preventDefault();    
+        }, false);
+        this.element.addEventListener("dragenter", function( event ) {
+            // highlight potential drop target when the draggable element enters it
+            event.preventDefault();
+            if (event.target.className.includes("square")) {
+                event.target.style.background = "purple";
+            }
+
+        }, false);
+        this.element.addEventListener("dragleave", function( event ) {
+            // highlight potential drop target when the draggable element enters it
+            event.preventDefault();
+            if (event.target.className.includes("square")) {
+                event.target.style.background = "";
+            }
+
+        }, false);
+        this.element.addEventListener('drop', (event) => {
+            event.preventDefault();
+            event.target.style.background = "";  
+            const from = event.dataTransfer.getData('text/plain'); 
+            const promotion = this.board.promotion;    
+            let move = {
+                from,
+                to: this.pos,
+                promotion
+            };
+            console.log(move);
+            this.chess.move(move);
+            this.board.updatefn();
+        }, false);
     }
 
     update(piece) {

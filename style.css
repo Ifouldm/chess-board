@@ -20,6 +20,7 @@ body {
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
     border: 8px solid black;
+    border-radius: 10px;
 }
 
 .square {
@@ -42,4 +43,105 @@ body {
 .piece {
     width: 80%;
     height: 80%;
+}
+
+.toolbar {
+    height: 90vmin;
+    width: 30vmin;
+    padding: 1%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(245, 235, 214);
+    border: 8px solid black;
+    border-radius: 10px;
+}
+
+.toolbar input {
+    outline: none;
+    display: block;
+    background: rgba(0, 0, 0, 0.1);
+    width: 100%;
+    border: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 12px 20px;
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: 500;
+}
+
+.toolbar button {
+    outline: none;
+    background: rgb(67, 138, 73);
+    width: 100%;
+    border: 0;
+    border-radius: 4px;
+    padding: 12px 20px;
+    color: #FFFFFF;
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.toolbar .row {
+    width: 100%;
+    margin: 10px;
+}
+
+.toolbar .dark {
+    width: 20px;
+    height: 20px;
+    background-color: black;
+}
+
+.toolbar .light {
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border: 1px solid black;
+}
+
+.toolbar .button {
+    width: 100%;
+}
+
+.toolbar .scrollableArea {
+    height: 30vmin;
+    overflow-y: scroll;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.toolbar .history {
+    list-style-position: inside;
+    font-weight: bold;
+}
+
+.toolbar .history .lightMove {
+    background-color: lightgray;
+    color: white;
+    padding: 5px;
+}
+
+.toolbar .history .darkMove {
+    color: black;
+    padding: 5px;
+}
+
+.promotion {
+    flex-direction: row !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.toolbar .selection {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 10px;
+}
+
+.toolbar .selection:checked+img {
+    outline: 5px solid rgb(67, 138, 73);
 }
