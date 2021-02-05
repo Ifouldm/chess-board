@@ -1,9 +1,9 @@
 import Square from './square.js';
 
 class Board {
-    constructor(chess, updatefn) {
+    constructor(chess, moveFn) {
         this.promotion = 'q';
-        this.updatefn = updatefn;
+        this.moveFn = moveFn;
         this.chess = chess;
         this.element = document.createElement('div');
         this.element.classList.add('board');
@@ -12,13 +12,18 @@ class Board {
     }
 
     generateSquares() {
-        const colRef = ['a','b','c','d','e','f','g','h'];
-        for (let i = 0; i < 64; i++) {
-            let rank = colRef[i % 8];
-            let file = 7- Math.floor(i / 8) + 1;
-            let pos = ''+rank+file;
-            let piece = this.chess.get(pos);
-            this.squares.set(pos, new Square(this.chess, this, piece, pos, this.chess.square_color(pos)));
+        const colRef = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        for (let i = 0; i < 64; i += 1) {
+            const rank = colRef[i % 8];
+            const file = 7 - Math.floor(i / 8) + 1;
+            const pos = `${rank}${file}`;
+            const piece = this.chess.get(pos);
+            this.squares.set(pos, new Square(
+                this.chess,
+                this, piece,
+                pos,
+                this.chess.square_color(pos),
+            ));
             this.element.appendChild(this.squares.get(pos).element);
         }
     }
@@ -28,7 +33,7 @@ class Board {
     }
 
     highlight(pos) {
-        let moves = this.chess.moves({ square: pos, verbose: true });
+        const moves = this.chess.moves({ square: pos, verbose: true });
         moves.forEach((move) => this.squares.get(move.to).highlight());
     }
 
@@ -40,7 +45,7 @@ class Board {
 
     update() {
         for (const square of this.squares) {
-            let piece = this.chess.get(square[0]);
+            const piece = this.chess.get(square[0]);
             square[1].update(piece);
         }
     }
