@@ -1,0 +1,28 @@
+{
+  "name": "chess-board",
+  "version": "1.0.0",
+  "description": "Chess application",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ifouldm/chess-board.git"
+  },
+  "author": "Matthew Ifould",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Ifouldm/chess-board/issues"
+  },
+  "homepage": "https://github.com/Ifouldm/chess-board#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.19.0"
+  }
+}
