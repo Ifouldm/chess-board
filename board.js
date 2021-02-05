@@ -7,7 +7,7 @@ class Board {
         this.chess = chess;
         this.element = document.createElement('div');
         this.element.classList.add('board');
-        this.squares = [];
+        this.squares = new Map();
         this.generateSquares();
     }
 
@@ -18,8 +18,8 @@ class Board {
             let file = 7- Math.floor(i / 8) + 1;
             let pos = ''+rank+file;
             let piece = this.chess.get(pos);
-            this.squares[i] = new Square(this.chess, this, piece, pos, this.chess.square_color(pos));
-            this.element.appendChild(this.squares[i].element);
+            this.squares.set(pos, new Square(this.chess, this, piece, pos, this.chess.square_color(pos)));
+            this.element.appendChild(this.squares.get(pos).element);
         }
     }
 
@@ -27,10 +27,21 @@ class Board {
         this.promotion = promotion;
     }
 
+    highlight(pos) {
+        let moves = this.chess.moves({ square: pos, verbose: true });
+        moves.forEach((move) => this.squares.get(move.to).highlight());
+    }
+
+    clearHighlighting() {
+        for (const square of this.squares) {
+            square[1].clearHighlighting();
+        }
+    }
+
     update() {
         for (const square of this.squares) {
-            let piece = this.chess.get(square.pos);
-            square.update(piece);
+            let piece = this.chess.get(square[0]);
+            square[1].update(piece);
         }
     }
 }

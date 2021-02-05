@@ -9,6 +9,8 @@ const history = document.getElementById('history');
 const computer = document.getElementById('computer');
 const promotion = document.getElementById('promotion');
 
+let timer;
+
 var chess = new Chess();
 const chessBoard = new Board(chess, update);
 app.appendChild(chessBoard.element);
@@ -20,10 +22,16 @@ promotion.addEventListener('change', (event) => {
 });
 
 //moves.update();
-console.log(chess);
+// console.log(chess);
 
-// computer clock
-const timer = setInterval(playMove, 1000);
+computer.addEventListener('change', (event) => {
+    if(event.target.checked) {
+        timer = setInterval(playMove, 1000);
+    } else {
+        clearInterval(timer);
+    }
+});
+
 
 function playMove() {
     if (computer.checked && chess.turn() === 'b') {
@@ -43,6 +51,7 @@ function update() {
     if (chess.in_checkmate()) statusText.value += 'Checkmate ';
     if (!chess.in_checkmate() && chess.in_check()) statusText.value += 'Check ';
     if (chess.in_draw()) statusText.value += 'Draw ';
+    if (chess.insufficient_material()) statusText.value += 'Insufficient Material ';
     if (chess.in_threefold_repetition()) statusText.value += 'Threefold Repetition';
 
     history.innerHTML = '';
@@ -53,7 +62,7 @@ function update() {
         history.append(historyElement);
     });
     
-    turn.className = chess.turn() === 'w' ? 'light' : 'dark';
+    turn.className = chess.turn() === 'w' ? 'turn light' : 'turn dark';
 }
 
 // Toolbar
@@ -64,15 +73,17 @@ resetButton.addEventListener('click', () => {
         update();
     }
 });
+const concedeButton = document.getElementById('concedeButton');
 concedeButton.addEventListener('click', () => {
     if (confirm('Are you sure?')) {
-        chess.;
+        console.log('Player conceded');
         update();
     }
 });
+const offerDrawButton = document.getElementById('offerDrawButton');
 offerDrawButton.addEventListener('click', () => {
     if (confirm('Are you sure?')) {
-        chess.reset();
+        console.log('Player offers draw');
         update();
     }
 });

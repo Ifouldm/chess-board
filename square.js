@@ -22,7 +22,6 @@ class Square {
         this.element.id = pos;
         this.piece = document.createElement('img');
         this.addEventListeners(pos);
-        this.pos = pos;
         this.element.appendChild(this.piece);
         this.piece.draggable = true;
         this.piece.style.display = 'none';
@@ -31,22 +30,25 @@ class Square {
     }
 
     addEventListeners(pos){
-        this.element.addEventListener("dragstart", function( event ) {
+        let board = this.board;
+        this.element.addEventListener("dragstart", function(event) {
+            console.log(pos);
+            board.highlight(pos);
             event.dataTransfer.setData('text/plain', pos);
         }, false);
         this.element.addEventListener('dragover', (event) => {
             event.preventDefault();    
         }, false);
-        this.element.addEventListener("dragenter", function( event ) {
+        this.element.addEventListener("dragenter", function(event) {
             // highlight potential drop target when the draggable element enters it
             event.preventDefault();
             if (event.target.className.includes("square")) {
-                event.target.style.background = "purple";
+                event.target.style.background = "#e6ccff";
             }
 
         }, false);
-        this.element.addEventListener("dragleave", function( event ) {
-            // highlight potential drop target when the draggable element enters it
+        this.element.addEventListener("dragleave", function(event) {
+            // clear highlight from drop target when the draggable element leaves it
             event.preventDefault();
             if (event.target.className.includes("square")) {
                 event.target.style.background = "";
@@ -55,18 +57,28 @@ class Square {
         }, false);
         this.element.addEventListener('drop', (event) => {
             event.preventDefault();
-            event.target.style.background = "";  
-            const from = event.dataTransfer.getData('text/plain'); 
-            const promotion = this.board.promotion;    
+            const from = event.dataTransfer.getData('text/plain');
+            console.log(from);
+            const to = pos;
+            const promotion = this.board.promotion;
             let move = {
                 from,
-                to: this.pos,
+                to,
                 promotion
             };
             console.log(move);
             this.chess.move(move);
             this.board.updatefn();
         }, false);
+        this.element.addEventListener('dragend', () => this.board.clearHighlighting());
+    }
+
+    clearHighlighting() {
+        this.element.style.background = '';
+    }
+
+    highlight() {
+        this.element.style.background = 'red';
     }
 
     update(piece) {

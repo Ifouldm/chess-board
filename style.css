@@ -15,12 +15,11 @@ body {
 .board {
     display: grid;
     height: 90vmin;
-    width: 90vmin;
+    width: 80vmin;
     margin: 5vmin;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
-    border: 8px solid black;
-    border-radius: 10px;
+    border: 1vmin solid black;
 }
 
 .square {
@@ -48,17 +47,18 @@ body {
 .toolbar {
     height: 90vmin;
     width: 30vmin;
-    padding: 1%;
+    padding: 1vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: rgb(245, 235, 214);
-    border: 8px solid black;
-    border-radius: 10px;
+    border: 1vmin solid black;
+    border-radius: 2vmin;
+    font-size: 2vmin;
 }
 
-.toolbar input {
+.toolbar .textinput {
     outline: none;
     display: block;
     background: rgba(0, 0, 0, 0.1);
@@ -66,9 +66,10 @@ body {
     border: 0;
     border-radius: 4px;
     box-sizing: border-box;
-    padding: 12px 20px;
-    color: rgba(0, 0, 0, 0.6);
-    font-weight: 500;
+    padding: 1vmin 2vmin;
+    color: darkred;
+    font-size: 2vmin;
+    font-weight: bold;
 }
 
 .toolbar button {
@@ -77,37 +78,40 @@ body {
     width: 100%;
     border: 0;
     border-radius: 4px;
-    padding: 12px 20px;
+    padding: 1vmin;
     color: #FFFFFF;
     font-weight: 500;
     text-transform: uppercase;
     cursor: pointer;
+    font-size: 2vmin;
 }
 
 .toolbar .row {
     width: 100%;
-    margin: 10px;
+    margin: 1vmin;
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
 }
 
-.toolbar .dark {
-    width: 20px;
-    height: 20px;
+.toolbar .turn {
+    border-radius: 5px;
+    width: 3vmin;
+    height: 3vmin;
+}
+
+.toolbar .turn.dark {
     background-color: black;
 }
 
-.toolbar .light {
-    width: 20px;
-    height: 20px;
+.toolbar .turn.light {
     background-color: white;
-    border: 1px solid black;
-}
-
-.toolbar .button {
-    width: 100%;
+    border: 2px solid rgb(67, 138, 73);
 }
 
 .toolbar .scrollableArea {
     height: 30vmin;
+    width: 100%;
     overflow-y: scroll;
     background: rgba(0, 0, 0, 0.1);
 }
@@ -115,23 +119,23 @@ body {
 .toolbar .history {
     list-style-position: inside;
     font-weight: bold;
+    font-size: 2vmin;
 }
 
 .toolbar .history .lightMove {
-    background-color: lightgray;
+    background-color: #c7b595;
     color: white;
-    padding: 5px;
+    padding: 1vmin 2vmin;
 }
 
 .toolbar .history .darkMove {
     color: black;
-    padding: 5px;
+    padding: 1vmin 2vmin;
 }
 
-.promotion {
-    flex-direction: row !important;
-    justify-content: center;
-    align-items: center;
+.toolbar .img {
+    width: 4vmin;
+    height: 4vmin;
 }
 
 .toolbar .selection {
@@ -139,9 +143,13 @@ body {
     opacity: 0;
     width: 0;
     height: 0;
-    margin: 10px;
 }
 
 .toolbar .selection:checked+img {
-    outline: 5px solid rgb(67, 138, 73);
+    outline: 0.3vmin solid rgb(67, 138, 73);
+}
+
+.toolbar .checkbox {
+    width: 3vmin;
+    height: 3vmin;
 }
