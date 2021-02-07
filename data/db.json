@@ -1,3 +1,3 @@
-{"player1":{"id":"5a23814e-b4ae-4d9e-80ff-e05c2e14af92","score":0,"colour":"dark"},"player2":{"id":"074951dc-30e9-48cd-bef7-5125298f8976","score":0,"colour":"light"},"pgn":"","_id":"v2ogz9era8P3zQKL"}
-{"player1":{"id":"5a23814e-b4ae-4d9e-80ff-e05c2e14af92","score":0,"colour":"dark"},"player2":{"id":"074951dc-30e9-48cd-bef7-5125298f8976","score":0,"colour":"light"},"pgn":"1. a4","_id":"v2ogz9era8P3zQKL"}
-{"player1":{"id":"5a23814e-b4ae-4d9e-80ff-e05c2e14af92","score":0,"colour":"dark"},"player2":{"id":"074951dc-30e9-48cd-bef7-5125298f8976","score":0,"colour":"light"},"pgn":"1. a4 b5","_id":"v2ogz9era8P3zQKL"}
+{"player1":{"id":"3bb2e881-565e-4dda-8761-c04c69d35bfb","name":"Fred","score":0,"colour":"w"},"player2":{"id":"5f324afd-fb3d-4cda-a702-17ff397b7613","name":"Bill","score":0,"colour":"b"},"pgn":"","_id":"4rLdZzEsbsy40ZBp"}
+{"player1":{"id":"74193c79-c346-4182-875b-21017a58d8f3","name":"Fred","score":0,"colour":"w"},"player2":{"id":"74f0ab3c-4fd7-4f2e-a9d8-f6cfe5163101","name":"Billy","score":0,"colour":"b"},"pgn":"1. a4 b5 2. axb5 Ba6 3. Rxa6","_id":"cDhSqjZmqQTV2IZf"}
+{"player1":{"id":"c59efa4f-9321-47d4-99fd-e722304a6931","score":0,"colour":"b"},"player2":{"id":"71cde05c-4667-4ca7-95f5-35482f2e9ef8","score":0,"colour":"w"},"pgn":"1. a4 b6 2. a5 bxa5 3. Nc3 c6 4. b4 axb4 5. Nb5 b3 6. cxb3 cxb5","_id":"l97jXVrZDVxY6Y8M"}

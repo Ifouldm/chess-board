@@ -13,20 +13,23 @@ const port = 3000;
 
 function createMatch(player1, player2) {
     const chess = new Chess();
-    const player1Colour = Math.random() < 0.5 ? 'light' : 'dark';
-    const player2Colour = player1Colour === 'light' ? 'dark' : 'light';
-    chess.header(player1Colour, player1);
-    chess.header(player2Colour, player2);
-    const player1Id = uuid.v4();
-    const player2Id = uuid.v4();
+    const player1Colour = Math.random() < 0.5 ? 'w' : 'b';
+    const player2Colour = player1Colour === 'w' ? 'b' : 'w';
     const game = {
-        player1: { id: player1Id, score: 0, colour: player1Colour },
-        player2: { id: player2Id, score: 0, colour: player2Colour },
+        player1: {
+            id: uuid.v4(), name: player1, score: 0, colour: player1Colour,
+        },
+        player2: {
+            id: uuid.v4(), name: player2, score: 0, colour: player2Colour,
+        },
         pgn: chess.pgn().toString(),
     };
-    db.insert(game, (err) => {
+    db.insert(game, (err, insertedGame) => {
         if (err) {
             console.log(err);
+        } else {
+            console.log(`http://localhost:3000?gameId=${insertedGame._id}&token=${insertedGame.player1.id}`);
+            console.log(`http://localhost:3000?gameId=${insertedGame._id}&token=${insertedGame.player2.id}`);
         }
     });
 }
@@ -44,7 +47,7 @@ io.on('connection', (socket) => {
     socket.on('auth', (gameId, tokenId) => {
         db.findOne({ _id: gameId }, (err, game) => {
             let colour;
-            if (err) {
+            if (err || !game) {
                 console.error(`Error: ${err}`);
             } else {
                 if (game.player1.id === tokenId) {
@@ -52,6 +55,8 @@ io.on('connection', (socket) => {
                 } else if (game.player2.id === tokenId) {
                     colour = game.player2.colour;
                 }
+                delete game.player1.id;
+                delete game.player2.id;
                 socket.emit('initialState', game, colour);
             }
         });

@@ -1,6 +1,7 @@
 import Board from './board.js';
 import { Chess } from './lib/chess.js';
 
+// DOM elements
 const app = document.getElementById('app');
 const statusText = document.getElementById('status');
 const turn = document.getElementById('turn');
@@ -9,11 +10,13 @@ const promotion = document.getElementById('promotion');
 const playerName = document.getElementById('playerName');
 
 const chess = new Chess();
+const chessBoard = new Board(chess, movePiece);
 
 const socket = io();
 
-let chessBoard;
 let colour;
+let player1;
+let player2;
 
 // Get game details using query params
 function getParameterByName(name, url = window.location.href) {
@@ -56,19 +59,10 @@ function update() {
     });
     const turnColour = chess.turn();
     turn.className = turnColour === 'w' ? 'turn light' : 'turn dark';
-    const header = chess.header();
-    const player = turnColour === 'w' ? header.White : header.Black;
-
-    playerName.textContent = player;
+    playerName.textContent = player1.colour === turnColour ? player1.name : player2.name;
 }
 
 // Toolbar
-const resetButton = document.getElementById('resetButton');
-resetButton.addEventListener('click', () => {
-    if (confirm('Are you sure?')) {
-        socket.emit('reset', 'reset');
-    }
-});
 const concedeButton = document.getElementById('concedeButton');
 concedeButton.addEventListener('click', () => {
     if (confirm('Are you sure?')) {
@@ -91,7 +85,7 @@ commandField.addEventListener('keyup', (event) => {
 
 // Socket events
 function movePiece(moveObj) {
-    if (colour) {
+    if (colour === chess.turn()) {
         if (chess.move(moveObj)) {
             socket.emit('move', gameId, token, moveObj);
         }
@@ -105,8 +99,9 @@ socket.on('update', (chessState) => {
 
 socket.on('initialState', (chessState, playerColour) => {
     colour = playerColour;
+    player1 = chessState.player1;
+    player2 = chessState.player2;
     chess.load_pgn(chessState.pgn.toString());
-    chessBoard = new Board(chess, movePiece);
     app.appendChild(chessBoard.element);
     update();
 });
