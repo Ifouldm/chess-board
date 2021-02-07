@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <div id="loading" class="loading">Loading</div>
     <div id="app"></div>
     <div id="toolbar" class="toolbar">
         <div class="row">Status:</div>
@@ -61,7 +62,16 @@
             <input id=command class="textinput">
         </div>
     </div>
-    <script src="lib/socket.io.js"></script>
+    <!-- The Modal -->
+    <div id="confirmModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modalText">Some text in the Modal..</p>
+            <button id="modalOk" class="button">Ok</button><button id="modalCancel" class="button">Cancel</button>
+        </div>
+    </div>
+    <script src="./lib/socket.io.js"></script>
     <script type="module" src="app.js"></script>
 </body>
 

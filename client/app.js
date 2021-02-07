@@ -1,4 +1,5 @@
 import Board from './board.js';
+import Modal from './modal.js';
 import { Chess } from './lib/chess.js';
 
 // DOM elements
@@ -8,15 +9,20 @@ const turn = document.getElementById('turn');
 const history = document.getElementById('history');
 const promotion = document.getElementById('promotion');
 const playerName = document.getElementById('playerName');
+const loading = document.getElementById('loading');
 
-const chess = new Chess();
-const chessBoard = new Board(chess, movePiece);
+const modal = new Modal();
 
 const socket = io();
 
 let colour;
-let player1;
-let player2;
+let player1 = '';
+let player2 = '';
+
+// Setup and draw
+const chess = new Chess();
+const chessBoard = new Board(chess, movePiece);
+update();
 
 // Get game details using query params
 function getParameterByName(name, url = window.location.href) {
@@ -59,27 +65,28 @@ function update() {
     });
     const turnColour = chess.turn();
     turn.className = turnColour === 'w' ? 'turn light' : 'turn dark';
-    playerName.textContent = player1.colour === turnColour ? player1.name : player2.name;
+    if (player1) {
+        playerName.textContent = player1.colour === turnColour ? player1.name : player2.name;
+    }
 }
 
 // Toolbar
 const concedeButton = document.getElementById('concedeButton');
 concedeButton.addEventListener('click', () => {
-    if (confirm('Are you sure?')) {
-        socket.emit('concede', 'concede');
-    }
+    modal.show('Are you sure you want to Concede?', () => {
+        socket.emit('concede', gameId, token);
+    });
 });
 const offerDrawButton = document.getElementById('offerDrawButton');
 offerDrawButton.addEventListener('click', () => {
-    if (confirm('Are you sure?')) {
-        socket.emit('offerDraw', 'offerDraw');
-        console.log('Player offers draw');
-    }
+    modal.show('Are you sure you want to offer a draw?', () => {
+        socket.emit('offerDraw', gameId, token);
+    });
 });
 const commandField = document.getElementById('command');
 commandField.addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
-        socket.emit('command', commandField.value);
+        socket.emit('command', commandField.value, token);
     }
 });
 
@@ -98,10 +105,35 @@ socket.on('update', (chessState) => {
 });
 
 socket.on('initialState', (chessState, playerColour) => {
+    loading.style.display = 'none';
     colour = playerColour;
     player1 = chessState.player1;
     player2 = chessState.player2;
     chess.load_pgn(chessState.pgn.toString());
     app.appendChild(chessBoard.element);
     update();
+});
+
+socket.on('concede', (concedeColour) => {
+    modal.show(`${concedeColour} conceded, ok to start new game`);
+});
+
+socket.on('drawOffer', (game, drawColour) => {
+    if (game === gameId) {
+        modal.show(`${drawColour} offered a draw, ok to accept cancel to deny`);
+    }
+});
+
+socket.on('gameList', (gameList) => {
+    loading.style.display = 'none';
+    const list = document.createElement('ul');
+    gameList.forEach((gameItem) => {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `/?gameId=${gameItem._id}`;
+        link.textContent = `${gameItem.player1.name} vs ${gameItem.player2.name}`;
+        item.appendChild(link);
+        list.appendChild(item);
+    });
+    app.appendChild(list);
 });

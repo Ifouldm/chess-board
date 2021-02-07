@@ -45,21 +45,37 @@ io.on('connection', (socket) => {
         }
     });
     socket.on('auth', (gameId, tokenId) => {
-        db.findOne({ _id: gameId }, (err, game) => {
-            let colour;
-            if (err || !game) {
-                console.error(`Error: ${err}`);
-            } else {
-                if (game.player1.id === tokenId) {
-                    colour = game.player1.colour;
-                } else if (game.player2.id === tokenId) {
-                    colour = game.player2.colour;
+        if (!gameId) {
+            db.find({}, {}, (err, res) => {
+                if (err) {
+                    console.error(`Error: ${err}`);
+                } else {
+                    const list = res.slice();
+                    list.forEach((item) => {
+                        delete item.player1.id;
+                        delete item.player2.id;
+                    });
+                    console.log(list);
+                    socket.emit('gameList', list);
                 }
-                delete game.player1.id;
-                delete game.player2.id;
-                socket.emit('initialState', game, colour);
-            }
-        });
+            });
+        } else {
+            db.findOne({ _id: gameId }, (err, game) => {
+                let colour;
+                if (err || !game) {
+                    console.error(`Error: ${err}`);
+                } else {
+                    if (game.player1.id === tokenId) {
+                        colour = game.player1.colour;
+                    } else if (game.player2.id === tokenId) {
+                        colour = game.player2.colour;
+                    }
+                    delete game.player1.id;
+                    delete game.player2.id;
+                    socket.emit('initialState', game, colour);
+                }
+            });
+        }
     });
     socket.on('move', (gameId, tokenId, move) => {
         const chess = new Chess();
@@ -87,14 +103,29 @@ io.on('connection', (socket) => {
             }
         });
     });
-    socket.on('reset', (details) => {
-        console.log(`reset ${details}`);
+    socket.on('concede', (gameId, token) => {
+        let colour = '';
+        db.findOne({ _id: gameId }, (game) => {
+            if (game.player1.id === token) {
+                colour = game.player1.colour;
+            }
+            if (game.player2.id === token) {
+                colour = game.player2.colour;
+            }
+        });
+        io.emit('concede', gameId, colour);
     });
-    socket.on('concede', (details) => {
-        console.log(`concede ${details}`);
-    });
-    socket.on('offerDraw', (details) => {
-        console.log(`draw offer ${details}`);
+    socket.on('offerDraw', (gameId, token) => {
+        let colour = '';
+        db.findOne({ _id: gameId }, (game) => {
+            if (game.player1.id === token) {
+                colour = game.player1.colour;
+            }
+            if (game.player2.id === token) {
+                colour = game.player2.colour;
+            }
+        });
+        io.emit('offerDraw', gameId, colour);
     });
     console.log('user connected');
 });
