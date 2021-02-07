@@ -32,7 +32,6 @@ class Square {
     addEventListeners(pos) {
         const { board } = this;
         this.element.addEventListener('dragstart', (event) => {
-            console.log(pos);
             board.highlight(pos);
             event.dataTransfer.setData('text/plain', pos);
         }, false);
@@ -57,7 +56,6 @@ class Square {
             event.preventDefault();
             event.target.classList.remove('overlay', 'red');
             const from = event.dataTransfer.getData('text/plain');
-            console.log(from);
             const to = pos;
             const { promotion } = this.board;
             const move = {

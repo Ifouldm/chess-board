@@ -11,15 +11,15 @@
 <body>
     <div id="app"></div>
     <div id="toolbar" class="toolbar">
+        <div class="row">Status:</div>
         <div class="row">
-            <label for="status">Status: </label>
             <input type="text" class="textinput" name="status" id="status" readonly>
         </div>
         <div class="row">
             <button id=resetButton class="button">Reset</button>
         </div>
         <div class="row">
-            Turn:
+            Turn: <span id="playerName"></span>
             <div id="turn" class="turn light"></div>
         </div>
         <div class="row">Moves:</div>
@@ -27,10 +27,6 @@
             <div class="scrollableArea">
                 <ol id="history" reversed class="history"></ol>
             </div>
-        </div>
-        <div class="row">
-            <label for="computer">Computer: </label>
-            <input id="computer" class="checkbox" type="checkbox" />
         </div>
         <div class="row">
             Promotion choice:
@@ -60,6 +56,9 @@
         </div>
         <div class="row">
             <button id=offerDrawButton class="button">Offer Draw</button>
+        </div>
+        <div class="row">
+            <input id=command class="textinput">
         </div>
     </div>
     <script src="lib/socket.io.js"></script>

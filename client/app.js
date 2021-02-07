@@ -5,33 +5,35 @@ const app = document.getElementById('app');
 const statusText = document.getElementById('status');
 const turn = document.getElementById('turn');
 const history = document.getElementById('history');
-const computer = document.getElementById('computer');
 const promotion = document.getElementById('promotion');
-let chess = new Chess();
+const playerName = document.getElementById('playerName');
+
+const chess = new Chess();
 
 const socket = io();
 
-let timer;
+let chessBoard;
+let colour;
 
-function move(moveObj) {
-    if (chess.move(moveObj)) {
-        socket.emit('move', moveObj);
-    }
+// Get game details using query params
+function getParameterByName(name, url = window.location.href) {
+    const sanName = name.replace(/[[\]]/g, '\\$&');
+    const regex = new RegExp(`[?&]${sanName}(=([^&#]*)|&|#|$)`);
+    const results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
-
-const chessBoard = new Board(chess, move);
-app.appendChild(chessBoard.element);
-// const moves = new Moves(chess);
+const gameId = getParameterByName('gameId');
+const token = getParameterByName('token');
+socket.emit('auth', gameId, token);
 
 // Change the default choice for promotion
 promotion.addEventListener('change', (event) => {
     chessBoard.changePromotion(event.target.value);
 });
 
-// moves.update();
-// console.log(chess);
-
-// Update after move
+// Update after each move
 function update() {
     chessBoard.update();
     statusText.value = '';
@@ -52,41 +54,25 @@ function update() {
         historyElement.append(historyLink);
         history.append(historyElement);
     });
+    const turnColour = chess.turn();
+    turn.className = turnColour === 'w' ? 'turn light' : 'turn dark';
+    const header = chess.header();
+    const player = turnColour === 'w' ? header.White : header.Black;
 
-    turn.className = chess.turn() === 'w' ? 'turn light' : 'turn dark';
+    playerName.textContent = player;
 }
-
-function playMove() {
-    if (computer.checked && chess.turn() === 'b') {
-        chess.move(chess.moves()[0]);
-        update();
-    }
-    if (chess.game_over()) {
-        clearInterval(timer);
-    }
-}
-
-computer.addEventListener('change', (event) => {
-    if (event.target.checked) {
-        timer = setInterval(playMove, 1000);
-    } else {
-        clearInterval(timer);
-    }
-});
 
 // Toolbar
 const resetButton = document.getElementById('resetButton');
 resetButton.addEventListener('click', () => {
     if (confirm('Are you sure?')) {
         socket.emit('reset', 'reset');
-        update();
     }
 });
 const concedeButton = document.getElementById('concedeButton');
 concedeButton.addEventListener('click', () => {
     if (confirm('Are you sure?')) {
         socket.emit('concede', 'concede');
-        update();
     }
 });
 const offerDrawButton = document.getElementById('offerDrawButton');
@@ -94,11 +80,33 @@ offerDrawButton.addEventListener('click', () => {
     if (confirm('Are you sure?')) {
         socket.emit('offerDraw', 'offerDraw');
         console.log('Player offers draw');
-        update();
+    }
+});
+const commandField = document.getElementById('command');
+commandField.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        socket.emit('command', commandField.value);
     }
 });
 
+// Socket events
+function movePiece(moveObj) {
+    if (colour) {
+        if (chess.move(moveObj)) {
+            socket.emit('move', gameId, token, moveObj);
+        }
+    }
+}
+
 socket.on('update', (chessState) => {
-    chess = chessState;
+    chess.load_pgn(chessState.toString());
+    update();
+});
+
+socket.on('initialState', (chessState, playerColour) => {
+    colour = playerColour;
+    chess.load_pgn(chessState.pgn.toString());
+    chessBoard = new Board(chess, movePiece);
+    app.appendChild(chessBoard.element);
     update();
 });
