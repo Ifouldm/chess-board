@@ -40,7 +40,6 @@ io.on('connection', (socket) => {
     socket.on('command', (command) => {
         if (command.startsWith('create')) {
             const parts = command.split(' ');
-            console.log(parts);
             createMatch(parts[1], parts[2]);
         }
     });
@@ -79,7 +78,7 @@ io.on('connection', (socket) => {
     });
     socket.on('move', (gameId, tokenId, move) => {
         const chess = new Chess();
-        db.findOne(({ _id: gameId }), (err, game) => {
+        db.findOne({ _id: gameId }, (err, game) => {
             if (err) {
                 console.error(`Error: ${err}`);
             } else {
@@ -104,30 +103,59 @@ io.on('connection', (socket) => {
         });
     });
     socket.on('concede', (gameId, token) => {
-        let colour = '';
-        db.findOne({ _id: gameId }, (game) => {
-            if (game.player1.id === token) {
-                colour = game.player1.colour;
-            }
-            if (game.player2.id === token) {
-                colour = game.player2.colour;
+        let playerName = '';
+        const chess = new Chess();
+        db.findOne({ _id: gameId }, (err, game) => {
+            if (err || !game) {
+                console.error(`Error: ${err}`);
+            } else {
+                if (game.player1.id === token) {
+                    playerName = game.player1.name;
+                    game.player2.score += 1;
+                }
+                if (game.player2.id === token) {
+                    playerName = game.player2.name;
+                    game.player1.score += 1;
+                }
+                chess.load_pgn(game.pgn);
+                chess.reset();
+                game.pgn = chess.pgn();
+                db.update({ _id: gameId }, game);
             }
         });
-        io.emit('concede', gameId, colour);
+        io.emit('concede', gameId, playerName);
+        io.emit('update', chess.pgn());
     });
     socket.on('offerDraw', (gameId, token) => {
+        let playerName = '';
         let colour = '';
-        db.findOne({ _id: gameId }, (game) => {
-            if (game.player1.id === token) {
-                colour = game.player1.colour;
-            }
-            if (game.player2.id === token) {
-                colour = game.player2.colour;
+        db.findOne({ _id: gameId }, (err, game) => {
+            if (err || !game) {
+                console.error(`Error: ${err}`);
+            } else {
+                if (game.player1.id === token) {
+                    playerName = game.player1.name;
+                    colour = game.player1.colour;
+                }
+                if (game.player2.id === token) {
+                    playerName = game.player2.name;
+                    colour = game.player2.colour;
+                }
+                io.emit('drawOffer', gameId, playerName, colour);
             }
         });
-        io.emit('offerDraw', gameId, colour);
     });
     console.log('user connected');
+});
+
+// debug
+db.findOne({}, {}, (err, doc) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(`http://localhost:3000?gameId=${doc._id}&token=${doc.player1.id}`);
+        console.log(`http://localhost:3000?gameId=${doc._id}&token=${doc.player2.id}`);
+    }
 });
 
 http.listen(port, () => {

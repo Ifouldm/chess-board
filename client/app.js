@@ -8,7 +8,7 @@ const statusText = document.getElementById('status');
 const turn = document.getElementById('turn');
 const history = document.getElementById('history');
 const promotion = document.getElementById('promotion');
-const playerName = document.getElementById('playerName');
+const playerBadge = document.getElementById('playerName');
 const loading = document.getElementById('loading');
 
 const modal = new Modal();
@@ -66,7 +66,7 @@ function update() {
     const turnColour = chess.turn();
     turn.className = turnColour === 'w' ? 'turn light' : 'turn dark';
     if (player1) {
-        playerName.textContent = player1.colour === turnColour ? player1.name : player2.name;
+        playerBadge.textContent = player1.colour === turnColour ? player1.name : player2.name;
     }
 }
 
@@ -114,13 +114,16 @@ socket.on('initialState', (chessState, playerColour) => {
     update();
 });
 
-socket.on('concede', (concedeColour) => {
-    modal.show(`${concedeColour} conceded, ok to start new game`);
+socket.on('concede', (game, playerName) => {
+    if (game === gameId) {
+        modal.show(`${playerName} conceded, ok to start new game`);
+    }
 });
 
-socket.on('drawOffer', (game, drawColour) => {
-    if (game === gameId) {
-        modal.show(`${drawColour} offered a draw, ok to accept cancel to deny`);
+socket.on('drawOffer', (game, playerName, concedeColour) => {
+    console.log(game, playerName, concedeColour);
+    if (game === gameId && concedeColour !== colour) {
+        modal.show(`${playerName} offered a draw, ok to accept cancel to deny`);
     }
 });
 
