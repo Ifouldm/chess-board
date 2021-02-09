@@ -1,0 +1,224 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.board {
+    display: grid;
+    height: 90vmin;
+    width: 80vmin;
+    margin: 5vmin;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    border: 1vmin solid black;
+}
+
+.square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2vmin;
+}
+
+.square.dark {
+    background-color: rgb(67, 138, 73);
+    color: white;
+}
+
+.square.light {
+    background-color: rgb(245, 235, 214);
+    color: black;
+}
+
+.overlay {
+    position: relative;
+}
+
+.overlay.red::after {
+    background: rgba(245, 57, 57, 0.3);
+}
+
+.overlay.purple::after {
+    background: rgba(170, 57, 245, 0.3);
+}
+
+.overlay::after {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+}
+
+.overlay:hover:after {
+    opacity: 0;
+}
+
+.piece {
+    width: 80%;
+    height: 80%;
+}
+
+.toolbar {
+    height: 90vmin;
+    width: 30vmin;
+    padding: 1vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(245, 235, 214);
+    border: 1vmin solid black;
+    border-radius: 2vmin;
+    font-size: 2vmin;
+}
+
+.toolbar .textinput {
+    outline: none;
+    display: block;
+    background: rgba(0, 0, 0, 0.1);
+    width: 100%;
+    border: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 1vmin 2vmin;
+    color: darkred;
+    font-size: 2vmin;
+    font-weight: bold;
+}
+
+.button {
+    outline: none;
+    background: rgb(67, 138, 73);
+    width: 100%;
+    border: 0;
+    border-radius: 4px;
+    padding: 1vmin;
+    color: #FFFFFF;
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 2vmin;
+    margin: 0.5vmin;
+}
+
+.toolbar .row {
+    width: 100%;
+    margin: 1vmin;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toolbar a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.toolbar .turn {
+    border-radius: 5px;
+    width: 3vmin;
+    height: 3vmin;
+    text-decoration: none;
+}
+
+.toolbar .turn.dark {
+    background-color: black;
+}
+
+.toolbar .turn.light {
+    background-color: white;
+    border: 2px solid rgb(67, 138, 73);
+}
+
+.toolbar .scrollableArea {
+    height: 30vmin;
+    width: 100%;
+    overflow-y: scroll;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.toolbar .history {
+    list-style-position: inside;
+    font-weight: bold;
+    font-size: 2vmin;
+}
+
+.toolbar .history .lightMove {
+    background-color: #c7b595;
+    color: white;
+    padding: 1vmin 2vmin;
+}
+
+.toolbar .history .darkMove {
+    color: black;
+    padding: 1vmin 2vmin;
+}
+
+.toolbar .img {
+    width: 4vmin;
+    height: 4vmin;
+}
+
+.toolbar .selection {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toolbar .selection:checked+img {
+    outline: 0.3vmin solid rgb(67, 138, 73);
+}
+
+.toolbar .checkbox {
+    width: 3vmin;
+    height: 3vmin;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

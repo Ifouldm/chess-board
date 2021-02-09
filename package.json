@@ -1,0 +1,36 @@
+{
+  "name": "chess-board",
+  "version": "1.0.0",
+  "description": "Chess application",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "jest",
+    "serve": "nodemon -e js,css,html index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ifouldm/chess-board.git"
+  },
+  "author": "Matthew Ifould",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Ifouldm/chess-board/issues"
+  },
+  "homepage": "https://github.com/Ifouldm/chess-board#readme",
+  "dependencies": {
+    "chess.js": "^0.11.0",
+    "express": "^4.17.1",
+    "nedb": "^1.8.0",
+    "socket.io": "^3.1.1",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.7"
+  }
+}
