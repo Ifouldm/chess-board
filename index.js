@@ -9,7 +9,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 function createMatch(player1, player2) {
     const chess = new Chess();
@@ -153,8 +153,8 @@ db.findOne({}, {}, (err, doc) => {
     if (err) {
         console.log(err);
     } else {
-        console.log(`http://localhost:3000?gameId=${doc._id}&token=${doc.player1.id}`);
-        console.log(`http://localhost:3000?gameId=${doc._id}&token=${doc.player2.id}`);
+        console.log(`/?gameId=${doc._id}&token=${doc.player1.id}`);
+        console.log(`/?gameId=${doc._id}&token=${doc.player2.id}`);
     }
 });
 
