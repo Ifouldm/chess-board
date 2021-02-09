@@ -81,7 +81,7 @@ body {
     background-color: rgb(245, 235, 214);
     border: 1vmin solid black;
     border-radius: 2vmin;
-    font-size: 2vmin;
+    font-size: 1.5vmin;
 }
 
 .toolbar .textinput {
@@ -94,7 +94,7 @@ body {
     box-sizing: border-box;
     padding: 1vmin 2vmin;
     color: darkred;
-    font-size: 2vmin;
+    font-size: 1.5vmin;
     font-weight: bold;
 }
 
@@ -115,7 +115,7 @@ body {
 
 .toolbar .row {
     width: 100%;
-    margin: 1vmin;
+    margin: 0.5vmin;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -152,18 +152,18 @@ body {
 .toolbar .history {
     list-style-position: inside;
     font-weight: bold;
-    font-size: 2vmin;
+    font-size: 1.5vmin;
 }
 
 .toolbar .history .lightMove {
     background-color: #c7b595;
     color: white;
-    padding: 1vmin 2vmin;
+    padding: 1vmin 1.5vmin;
 }
 
 .toolbar .history .darkMove {
     color: black;
-    padding: 1vmin 2vmin;
+    padding: 1vmin 1.5vmin;
 }
 
 .toolbar .img {
@@ -185,6 +185,29 @@ body {
 .toolbar .checkbox {
     width: 3vmin;
     height: 3vmin;
+}
+
+.toolbar .you {
+    font-weight: bold;
+    color: red;
+}
+
+.toolbar .score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid darkgray;
+    padding: 1vmin;
+    margin: 1vmin;
+    border-radius: 4px;
+}
+
+#p1Score {
+    margin-left: 1vmin;
+}
+
+#p2Score {
+    margin-left: 1vmin;
 }
 
 .modal {

@@ -2,7 +2,6 @@ import Square from './square.js';
 
 class Board {
     constructor(chess, moveFn) {
-        this.promotion = 'q';
         this.moveFn = moveFn;
         this.chess = chess;
         this.element = document.createElement('div');
@@ -26,10 +25,6 @@ class Board {
             ));
             this.element.appendChild(this.squares.get(pos).element);
         }
-    }
-
-    changePromotion(promotion) {
-        this.promotion = promotion;
     }
 
     highlight(pos) {

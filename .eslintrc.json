@@ -16,6 +16,8 @@
         "indent": ["error", 4],
         "no-console": "off",
         "no-restricted-syntax": "off",
-        "import/extensions": "off"
+        "import/extensions": "off",
+        "no-underscore-dangle": "off",
+        "no-param-reassign": "off"
     }
 }

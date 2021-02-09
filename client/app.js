@@ -1,28 +1,15 @@
 import Board from './board.js';
 import Modal from './modal.js';
+import Toolbar from './toolbar.js';
 import { Chess } from './lib/chess.js';
 
 // DOM elements
 const app = document.getElementById('app');
-const statusText = document.getElementById('status');
-const turn = document.getElementById('turn');
-const history = document.getElementById('history');
-const promotion = document.getElementById('promotion');
-const playerBadge = document.getElementById('playerName');
 const loading = document.getElementById('loading');
+const toolbarElement = document.getElementById('toolbar');
 
-const modal = new Modal();
-
+// SocketIO
 const socket = io();
-
-let colour;
-let player1 = '';
-let player2 = '';
-
-// Setup and draw
-const chess = new Chess();
-const chessBoard = new Board(chess, movePiece);
-update();
 
 // Get game details using query params
 function getParameterByName(name, url = window.location.href) {
@@ -33,41 +20,25 @@ function getParameterByName(name, url = window.location.href) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+// Query parameters & globals
 const gameId = getParameterByName('gameId');
 const token = getParameterByName('token');
+let colour;
+
 socket.emit('auth', gameId, token);
 
-// Change the default choice for promotion
-promotion.addEventListener('change', (event) => {
-    chessBoard.changePromotion(event.target.value);
-});
+// Setup and draw
+const chess = new Chess();
+const chessBoard = new Board(chess, movePiece);
+const toolbar = new Toolbar(toolbarElement);
+const modal = new Modal();
+update();
 
 // Update after each move
 function update() {
     chessBoard.update();
-    statusText.value = '';
-    if (chess.game_over()) statusText.value += 'Game Over ';
-    if (chess.in_checkmate()) statusText.value += 'Checkmate ';
-    if (!chess.in_checkmate() && chess.in_check()) statusText.value += 'Check ';
-    if (chess.in_draw()) statusText.value += 'Draw ';
-    if (chess.insufficient_material()) statusText.value += 'Insufficient Material ';
-    if (chess.in_threefold_repetition()) statusText.value += 'Threefold Repetition';
-
-    history.innerHTML = '';
-    chess.history().reverse().forEach((move, index) => {
-        const historyElement = document.createElement('li');
-        const historyLink = document.createElement('a');
-        historyLink.href = '#';
-        historyLink.textContent = move;
-        historyElement.className = index % 2 === 0 ? 'darkMove' : 'lightMove';
-        historyElement.append(historyLink);
-        history.append(historyElement);
-    });
-    const turnColour = chess.turn();
-    turn.className = turnColour === 'w' ? 'turn light' : 'turn dark';
-    if (player1) {
-        playerBadge.textContent = player1.colour === turnColour ? player1.name : player2.name;
-    }
+    toolbar.update(chess);
 }
 
 // Toolbar
@@ -93,37 +64,48 @@ commandField.addEventListener('keyup', (event) => {
 // Socket events
 function movePiece(moveObj) {
     if (colour === chess.turn()) {
+        moveObj.promotion = toolbar.promotionSelection;
         if (chess.move(moveObj)) {
             socket.emit('move', gameId, token, moveObj);
         }
     }
 }
 
-socket.on('update', (chessState) => {
-    chess.load_pgn(chessState.toString());
+socket.on('update', (game) => {
+    chess.load_pgn(game.pgn.toString());
+    toolbar.player1.score = game.player1.score;
+    toolbar.player2.score = game.player2.score;
     update();
 });
 
-socket.on('initialState', (chessState, playerColour) => {
+socket.on('initialState', (game, playerColour) => {
     loading.style.display = 'none';
     colour = playerColour;
-    player1 = chessState.player1;
-    player2 = chessState.player2;
-    chess.load_pgn(chessState.pgn.toString());
+    toolbar.set(game.player1, game.player2, colour);
+    chess.load_pgn(game.pgn.toString());
     app.appendChild(chessBoard.element);
     update();
 });
 
-socket.on('concede', (game, playerName) => {
-    if (game === gameId) {
-        modal.show(`${playerName} conceded, ok to start new game`);
+socket.on('concedeNotification', (gameRef, playerName, concedeColour) => {
+    if (gameRef === gameId && concedeColour !== colour) {
+        modal.show(`${playerName} conceded, ok to accept`);
     }
 });
 
-socket.on('drawOffer', (game, playerName, concedeColour) => {
-    console.log(game, playerName, concedeColour);
-    if (game === gameId && concedeColour !== colour) {
-        modal.show(`${playerName} offered a draw, ok to accept cancel to deny`);
+socket.on('drawOffer', (gameRef, playerName, drawColour) => {
+    if (gameRef === gameId && drawColour !== colour) {
+        modal.show(`${playerName} offered a draw, ok to accept, cancel to deny`, () => {
+            socket.emit('drawOfferReponse', gameId, token, true);
+        }, () => {
+            socket.emit('drawOfferReponse', gameId, token, false);
+        });
+    }
+});
+
+socket.on('drawNotification', (gameRef, accepted, resColour, resName) => {
+    if (gameRef === gameId && resColour !== colour) {
+        modal.show(`${resName} ${accepted ? 'accepted' : 'declined'} a draw, ok to continue`);
     }
 });
 

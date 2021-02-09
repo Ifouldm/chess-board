@@ -57,11 +57,9 @@ class Square {
             event.target.classList.remove('overlay', 'red');
             const from = event.dataTransfer.getData('text/plain');
             const to = pos;
-            const { promotion } = this.board;
             const move = {
                 from,
                 to,
-                promotion,
             };
             this.board.moveFn(move);
         }, false);
