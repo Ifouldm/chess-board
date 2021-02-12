@@ -7,14 +7,15 @@ class Board {
         this.element = document.createElement('div');
         this.element.classList.add('board');
         this.squares = new Map();
-        this.generateSquares();
+        this.generateSquares('w');
     }
 
-    generateSquares() {
+    generateSquares(colour) {
+        this.element.innerHTML = '';
         const colRef = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         for (let i = 0; i < 64; i += 1) {
-            const rank = colRef[i % 8];
-            const file = 7 - Math.floor(i / 8) + 1;
+            const rank = colour === 'w' ? colRef[i % 8] : colRef[7 - (i % 8)];
+            const file = colour === 'w' ? 7 - Math.floor(i / 8) + 1 : Math.floor(i / 8) + 1;
             const pos = `${rank}${file}`;
             const piece = this.chess.get(pos);
             this.squares.set(pos, new Square(

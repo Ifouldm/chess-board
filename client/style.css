@@ -245,3 +245,44 @@ body {
     text-decoration: none;
     cursor: pointer;
 }
+
+.scores {
+    height: 90vmin;
+    width: 80vmin;
+    margin: 5vmin;
+    border: 1vmin solid black;
+}
+
+table {
+    font-size: 3vmin;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-color: grey;
+    width: 100%;
+}
+
+table a {
+    color: darkgreen;
+}
+
+th {
+    padding-top: 1vmin;
+    padding-bottom: 1vmin;
+    background-color: rgb(67, 138, 73);
+    color: white;
+}
+
+td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 1vmin;
+}
+
+tr:nth-child(even) {
+    background-color: #c7b595;
+}
+
+tr:nth-child(odd) {
+    background-color: rgb(245, 235, 214);
+
+}

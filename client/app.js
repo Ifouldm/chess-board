@@ -1,6 +1,7 @@
 import Board from './board.js';
 import Modal from './modal.js';
 import Toolbar from './toolbar.js';
+import ScoreTable from './scoretable.js';
 import { Chess } from './lib/chess.js';
 
 // DOM elements
@@ -72,19 +73,24 @@ function movePiece(moveObj) {
 }
 
 socket.on('update', (game) => {
-    chess.load_pgn(game.pgn.toString());
-    toolbar.player1.score = game.player1.score;
-    toolbar.player2.score = game.player2.score;
-    update();
+    if (game._id === gameId) {
+        chess.load_pgn(game.pgn.toString());
+        toolbar.player1.score = game.player1.score;
+        toolbar.player2.score = game.player2.score;
+        update();
+    }
 });
 
 socket.on('initialState', (game, playerColour) => {
-    loading.style.display = 'none';
-    colour = playerColour;
-    toolbar.set(game.player1, game.player2, colour);
-    chess.load_pgn(game.pgn.toString());
-    app.appendChild(chessBoard.element);
-    update();
+    if (game._id === gameId) {
+        loading.style.display = 'none';
+        colour = playerColour;
+        if (colour === 'b') chessBoard.generateSquares('b');
+        toolbar.set(game.player1, game.player2, colour);
+        chess.load_pgn(game.pgn.toString());
+        app.appendChild(chessBoard.element);
+        update();
+    }
 });
 
 socket.on('concedeNotification', (gameRef, playerName, concedeColour) => {
@@ -111,14 +117,9 @@ socket.on('drawNotification', (gameRef, accepted, resColour, resName) => {
 
 socket.on('gameList', (gameList) => {
     loading.style.display = 'none';
-    const list = document.createElement('ul');
-    gameList.forEach((gameItem) => {
-        const item = document.createElement('li');
-        const link = document.createElement('a');
-        link.href = `/?gameId=${gameItem._id}`;
-        link.textContent = `${gameItem.player1.name} vs ${gameItem.player2.name}`;
-        item.appendChild(link);
-        list.appendChild(item);
-    });
-    app.appendChild(list);
+    const scoreDiv = document.createElement('div');
+    const scoreTable = new ScoreTable(gameList);
+    scoreDiv.appendChild(scoreTable.element);
+    scoreDiv.className = 'scores';
+    app.appendChild(scoreDiv);
 });
