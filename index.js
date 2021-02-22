@@ -1,4 +1,3 @@
-// const Datastore = require('nematches');
 const { Chess } = require('chess.js');
 const express = require('express');
 const uuid = require('uuid');
@@ -56,7 +55,7 @@ function resetGame(gameId) {
             chess.load_pgn(game.pgn);
             chess.reset();
             game.pgn = chess.pgn();
-            matches.update({ _id: gameId }, game, {}, () => {
+            matches.update({ _id: gameId }, game, { replaceOne: true }, () => {
                 delete game.player1.id;
                 delete game.player2.id;
                 io.emit('update', game);
@@ -72,7 +71,7 @@ function setScores(gameId, p1Score, p2Score) {
         } else {
             game.player1.score = p1Score;
             game.player2.score = p2Score;
-            matches.update({ _id: gameId }, game, {}, () => {
+            matches.update({ _id: gameId }, game, { replaceOne: true }, () => {
                 delete game.player1.id;
                 delete game.player2.id;
                 io.emit('update', game);
