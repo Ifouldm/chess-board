@@ -41,12 +41,12 @@ class Square {
                     board.clearHighlighting();
                     board.selected = null;
                 } else {
-                    board.selected = null;
                     board.clearHighlighting();
                     const move = {
                         from: board.selected,
                         to: pos,
                     };
+                    board.selected = null;
                     board.moveFn(move);
                 }
             }, false);
