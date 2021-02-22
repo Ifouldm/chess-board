@@ -14,6 +14,7 @@ const pieces = {
 };
 class Square {
     constructor(chess, board, piece, pos, sqColor) {
+        this.isMobile = /Mobi/i.test(navigator.userAgent);
         this.chess = chess;
         this.board = board;
         this.element = document.createElement('div');
@@ -31,39 +32,59 @@ class Square {
 
     addEventListeners(pos) {
         const { board } = this;
-        this.element.addEventListener('dragstart', (event) => {
-            board.highlight(pos);
-            event.dataTransfer.setData('text/plain', pos);
-        }, false);
-        this.element.addEventListener('dragover', (event) => {
-            event.preventDefault();
-        }, false);
-        this.element.addEventListener('dragenter', (event) => {
+        if (this.isMobile) {
+            this.element.addEventListener('click', () => {
+                if (!board.selected) {
+                    board.highlight(pos);
+                    board.selected = pos;
+                } else if (board.selected === pos) {
+                    board.clearHighlighting();
+                    board.selected = null;
+                } else {
+                    board.selected = null;
+                    board.clearHighlighting();
+                    const move = {
+                        from: board.selected,
+                        to: pos,
+                    };
+                    board.moveFn(move);
+                }
+            }, false);
+        } else {
+            this.element.addEventListener('dragstart', (event) => {
+                board.highlight(pos);
+                event.dataTransfer.setData('text/plain', pos);
+            }, false);
+            this.element.addEventListener('dragover', (event) => {
+                event.preventDefault();
+            }, false);
+            this.element.addEventListener('dragenter', (event) => {
             // highlight potential drop target when the draggable element enters it
-            event.preventDefault();
-            if (event.target.className.includes('square')) {
-                event.target.classList.add('overlay', 'red');
-            }
-        }, false);
-        this.element.addEventListener('dragleave', (event) => {
+                event.preventDefault();
+                if (event.target.className.includes('square')) {
+                    event.target.classList.add('overlay', 'red');
+                }
+            }, false);
+            this.element.addEventListener('dragleave', (event) => {
             // clear highlight from drop target when the draggable element leaves it
-            event.preventDefault();
-            if (event.target.className.includes('square')) {
+                event.preventDefault();
+                if (event.target.className.includes('square')) {
+                    event.target.classList.remove('overlay', 'red');
+                }
+            }, false);
+            this.element.addEventListener('drop', (event) => {
+                event.preventDefault();
                 event.target.classList.remove('overlay', 'red');
-            }
-        }, false);
-        this.element.addEventListener('drop', (event) => {
-            event.preventDefault();
-            event.target.classList.remove('overlay', 'red');
-            const from = event.dataTransfer.getData('text/plain');
-            const to = pos;
-            const move = {
-                from,
-                to,
-            };
-            this.board.moveFn(move);
-        }, false);
-        this.element.addEventListener('dragend', () => this.board.clearHighlighting());
+                const from = event.dataTransfer.getData('text/plain');
+                const to = pos;
+                const move = {
+                    from,
+                    to,
+                };
+                this.board.moveFn(move);
+            }, false);
+            this.element.addEventListener('dragend', () => this.board.clearHighlighting());
+        }
     }
 
     clearHighlighting() {
