@@ -1,9 +1,11 @@
-const Datastore = require('nedb');
+// const Datastore = require('nematches');
 const { Chess } = require('chess.js');
 const express = require('express');
 const uuid = require('uuid');
+require('dotenv').config();
+const db = require('monk')(process.env.MONGODBURI);
 
-const db = new Datastore({ filename: 'data/db.json', autoload: true });
+const matches = db.get('matches');
 
 const app = express();
 const http = require('http').Server(app);
@@ -24,7 +26,7 @@ function createMatch(player1, player2) {
         pgn: '',
     };
     console.log(game);
-    db.insert(game, (err, insertedGame) => {
+    matches.insert(game, (err, insertedGame) => {
         if (err) {
             console.error(err);
         } else {
@@ -37,16 +39,24 @@ function createMatch(player1, player2) {
     });
 }
 
+function deleteMatch(gameId) {
+    matches.remove({ _id: gameId }, (err) => {
+        if (err) {
+            console.error(err);
+        }
+    });
+}
+
 function resetGame(gameId) {
     const chess = new Chess();
-    db.findOne({ _id: gameId }, (err, game) => {
+    matches.findOne({ _id: gameId }, (err, game) => {
         if (err) {
             console.error(`Error: ${err}`);
         } else {
             chess.load_pgn(game.pgn);
             chess.reset();
             game.pgn = chess.pgn();
-            db.update({ _id: gameId }, game, {}, () => {
+            matches.update({ _id: gameId }, game, {}, () => {
                 delete game.player1.id;
                 delete game.player2.id;
                 io.emit('update', game);
@@ -56,13 +66,13 @@ function resetGame(gameId) {
 }
 
 function setScores(gameId, p1Score, p2Score) {
-    db.findOne({ _id: gameId }, (err, game) => {
+    matches.findOne({ _id: gameId }, (err, game) => {
         if (err) {
             console.error(`Error: ${err}`);
         } else {
             game.player1.score = p1Score;
             game.player2.score = p2Score;
-            db.update({ _id: gameId }, game, {}, () => {
+            matches.update({ _id: gameId }, game, {}, () => {
                 delete game.player1.id;
                 delete game.player2.id;
                 io.emit('update', game);
@@ -87,11 +97,15 @@ io.on('connection', (socket) => {
             const parts = command.split(' ');
             setScores(parts[1], Number(parts[2]), Number(parts[3]));
         }
+        if (command.startsWith('delete')) {
+            const parts = command.split(' ');
+            deleteMatch(parts[1]);
+        }
     });
 
     socket.on('auth', (gameId, tokenId) => {
         if (!gameId) {
-            db.find({}, {}, (err, res) => {
+            matches.find({}, {}, (err, res) => {
                 if (err) {
                     console.error(`Error: ${err}`);
                 } else {
@@ -104,7 +118,7 @@ io.on('connection', (socket) => {
                 }
             });
         } else {
-            db.findOne({ _id: gameId }, (err, game) => {
+            matches.findOne({ _id: gameId }, (err, game) => {
                 let colour;
                 if (err || !game) {
                     console.error(`Error: ${err}`);
@@ -124,7 +138,7 @@ io.on('connection', (socket) => {
 
     socket.on('move', (gameId, tokenId, move) => {
         const chess = new Chess();
-        db.findOne({ _id: gameId }, (err, game) => {
+        matches.findOne({ _id: gameId }, (err, game) => {
             if (err) {
                 console.error(`Error: ${err}`);
             } else {
@@ -138,7 +152,7 @@ io.on('connection', (socket) => {
                     chess.load_pgn(game.pgn);
                     chess.move(move);
                     const pgn = chess.pgn();
-                    db.update({ _id: gameId },
+                    matches.update({ _id: gameId },
                         { $set: { pgn } },
                         {},
                         (updateErr) => {
@@ -159,7 +173,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('concede', (gameId, token) => {
-        db.findOne({ _id: gameId }, (err, game) => {
+        matches.findOne({ _id: gameId }, (err, game) => {
             if (err || !game) {
                 console.error(`Error: ${err}`);
             } else {
@@ -183,7 +197,7 @@ io.on('connection', (socket) => {
     socket.on('offerDraw', (gameId, token) => {
         let playerName = '';
         let colour = '';
-        db.findOne({ _id: gameId }, (err, game) => {
+        matches.findOne({ _id: gameId }, (err, game) => {
             if (err || !game) {
                 console.error(`Error: ${err}`);
             } else {
@@ -201,7 +215,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('drawOfferReponse', (gameId, token, response) => {
-        db.findOne({ _id: gameId }, (err, game) => {
+        matches.findOne({ _id: gameId }, (err, game) => {
             if (err || !game) {
                 console.error(`Error: ${err}`);
             } else {
@@ -225,7 +239,7 @@ io.on('connection', (socket) => {
 });
 
 // debug
-db.findOne({}, {}, (err, doc) => {
+matches.findOne({}, {}, (err, doc) => {
     if (err) {
         console.error(err);
     } else if (doc) {
