@@ -1,10 +1,12 @@
-const subscriptions = {};
 const crypto = require('crypto');
 const webpush = require('web-push');
+const db = require('monk')(process.env.MONGODBURI);
+
+const subscriptions = db.get('subscriptions');
 
 const vapidKeys = {
-    privateKey: 'bdSiNzUhUP6piAxLH-tW88zfBlWWveIx0dAsDO66aVU',
-    publicKey: 'BIN2Jc5Vmkmy-S3AUrcMlpKxJpLeVRAfu9WBqUbJ70SJOCWGCGXKY-Xzyh7HDr6KbRDGYHjqZ06OcS3BjD7uAm8',
+    privateKey: 'BrZNzaIIzDeUwroYPG9eoVFsyESeWatf5y9PWyzB2z0',
+    publicKey: 'BL4eApB5vjociEAt6cIMFlIC0CUEl6l7JiNIzVrG1h4ReqhvY2zrmsjvDK7bWpr9ZCk5sJse7tSNaTtJK8QP2vE',
 };
 
 webpush.setVapidDetails('http://obidex.com', vapidKeys.publicKey, vapidKeys.privateKey);
@@ -16,32 +18,27 @@ function createHash(input) {
 }
 
 function handlePushNotificationSubscription(req, res) {
-    console.log('handle push not sub');
     const subscriptionRequest = req.body;
     const susbscriptionId = createHash(JSON.stringify(subscriptionRequest));
-    subscriptions[susbscriptionId] = subscriptionRequest;
+    subscriptions.insert(subscriptionRequest);
     res.status(201).json({ id: susbscriptionId });
 }
 
-function sendPushNotification(req, res) {
-    const subscriptionId = req.params.id;
-    const pushSubscription = subscriptions[subscriptionId];
-    webpush
-        .sendNotification(
-            pushSubscription,
-            JSON.stringify({
-                title: 'New Product Available ',
-                text: 'HEY! Take a look at this brand new t-shirt!',
-                image: '/images/jason-leung-HM6TMmevbZQ-unsplash.jpg',
-                tag: 'new-product',
-                url: '/new-product-jason-leung-HM6TMmevbZQ-unsplash.html',
-            }),
-        )
-        .catch((err) => {
-            console.log(err);
-        });
-
-    res.status(202).json({});
+function broadcastNotification(moveDetails) {
+    const payload = JSON.stringify({
+        title: 'New Move',
+        text: `From: ${moveDetails.from}, To: ${moveDetails.to}`,
+        image: '/assets/icon.png',
+        tag: 'new-move',
+        url: '#',
+    });
+    subscriptions.find({}).then((subs) => {
+        for (const sub of subs) {
+            webpush.sendNotification(sub, payload)
+                .then()
+                .catch((err) => console.error(err));
+        }
+    });
 }
 
-module.exports = { handlePushNotificationSubscription, sendPushNotification };
+module.exports = { handlePushNotificationSubscription, broadcastNotification };

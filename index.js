@@ -25,13 +25,12 @@ function createMatch(player1, player2) {
         },
         pgn: '',
     };
-    console.log(game);
     matches.insert(game, (err, insertedGame) => {
         if (err) {
             console.error(err);
         } else {
-            console.log(`/?gameId=${insertedGame._id}&token=${insertedGame.player1.id}`);
-            console.log(`/?gameId=${insertedGame._id}&token=${insertedGame.player2.id}`);
+            console.log(`http://localhost:3000?gameId=${insertedGame._id}&token=${insertedGame.player1.id}`);
+            console.log(`http://localhost:3000?gameId=${insertedGame._id}&token=${insertedGame.player2.id}`);
             delete insertedGame.player1.id;
             delete insertedGame.player2.id;
             io.emit('update', insertedGame);
@@ -82,9 +81,9 @@ function setScores(gameId, p1Score, p2Score) {
 }
 
 // Routes
+app.use(express.json());
 app.use('/', express.static('client'));
 app.post('/subscription', subscriptionHandler.handlePushNotificationSubscription);
-app.get('/subscription/:id', subscriptionHandler.sendPushNotification);
 
 // Socket events
 io.on('connection', (socket) => {
@@ -167,6 +166,7 @@ io.on('connection', (socket) => {
                                 delete game.player2.id;
                                 game.pgn = pgn;
                                 io.emit('update', game);
+                                subscriptionHandler.broadcastNotification(move);
                             }
                         });
                 } else {
@@ -247,8 +247,8 @@ matches.findOne({}, {}, (err, doc) => {
     if (err) {
         console.error(err);
     } else if (doc) {
-        console.log(`/?gameId=${doc._id}&token=${doc.player1.id}`);
-        console.log(`/?gameId=${doc._id}&token=${doc.player2.id}`);
+        console.log(`http://localhost:3000?gameId=${doc._id}&token=${doc.player1.id}`);
+        console.log(`http://localhost:3000?gameId=${doc._id}&token=${doc.player2.id}`);
     }
 });
 

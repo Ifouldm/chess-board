@@ -46,8 +46,19 @@ if (pushNotificationSuported) {
     registerServiceWorker();
     getUserSubscription().then((subscription) => {
         if (!subscription) {
-            createNotificationSubscription().then((res) => {
-                // console.log(res);
+            initializePushNotifications().then(() => {
+                createNotificationSubscription().then((sub) => {
+                    subscription = sub;
+                    fetch('/subscription', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(subscription),
+                    })
+                        .then(() => {})
+                        .catch((err) => console.log(err));
+                });
             });
         }
     });
