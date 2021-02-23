@@ -3,11 +3,21 @@ import Modal from './modal.js';
 import Toolbar from './toolbar.js';
 import ScoreTable from './scoretable.js';
 import { Chess } from './lib/chess.js';
+import {
+    isPushNotificationSupported,
+    initializePushNotifications,
+    registerServiceWorker,
+    getUserSubscription,
+    createNotificationSubscription,
+} from './push-notifications.js';
 
 // DOM elements
 const app = document.getElementById('app');
 const loading = document.getElementById('loading');
 const toolbarElement = document.getElementById('toolbar');
+
+// Audio
+const audioMove = new Audio('/assets/move.ogg');
 
 // SocketIO
 const socket = io();
@@ -28,6 +38,20 @@ const token = getParameterByName('token');
 let colour;
 
 socket.emit('auth', gameId, token);
+
+// Push services
+const pushNotificationSuported = isPushNotificationSupported();
+if (pushNotificationSuported) {
+    // register the service worker: file "sw.js" in the root of our project
+    registerServiceWorker();
+    getUserSubscription().then((subscription) => {
+        if (!subscription) {
+            createNotificationSubscription().then((res) => {
+                // console.log(res);
+            });
+        }
+    });
+}
 
 // Setup and draw
 const chess = new Chess();
@@ -78,6 +102,7 @@ socket.on('update', (game) => {
         toolbar.player1.score = game.player1.score;
         toolbar.player2.score = game.player2.score;
         update();
+        audioMove.play();
     }
 });
 
