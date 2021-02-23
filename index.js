@@ -10,6 +10,7 @@ const matches = db.get('matches');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const subscriptionHandler = require('./subscriptionHandler');
 
 const port = process.env.PORT || 3000;
 
@@ -81,8 +82,12 @@ function setScores(gameId, p1Score, p2Score) {
     });
 }
 
+// Routes
 app.use('/', express.static('client'));
+app.post('/subscription', subscriptionHandler.handlePushNotificationSubscription);
+app.get('/subscription/:id', subscriptionHandler.sendPushNotification);
 
+// Socket events
 io.on('connection', (socket) => {
     socket.on('command', (command) => {
         if (command.startsWith('create')) {
