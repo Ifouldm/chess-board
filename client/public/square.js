@@ -1,22 +1,20 @@
-const pieces = {
-    pb: 'Chess_pdt45.svg',
-    kb: 'Chess_kdt45.svg',
-    qb: 'Chess_qdt45.svg',
-    bb: 'Chess_bdt45.svg',
-    nb: 'Chess_ndt45.svg',
-    rb: 'Chess_rdt45.svg',
-    pw: 'Chess_plt45.svg',
-    kw: 'Chess_klt45.svg',
-    qw: 'Chess_qlt45.svg',
-    bw: 'Chess_blt45.svg',
-    nw: 'Chess_nlt45.svg',
-    rw: 'Chess_rlt45.svg',
-};
+const pieces = new Map();
+pieces.set('pb', 'Chess_pdt45.svg');
+pieces.set('kb', 'Chess_kdt45.svg');
+pieces.set('qb', 'Chess_qdt45.svg');
+pieces.set('bb', 'Chess_bdt45.svg');
+pieces.set('nb', 'Chess_ndt45.svg');
+pieces.set('rb', 'Chess_rdt45.svg');
+pieces.set('pw', 'Chess_plt45.svg');
+pieces.set('kw', 'Chess_klt45.svg');
+pieces.set('qw', 'Chess_qlt45.svg');
+pieces.set('bw', 'Chess_blt45.svg');
+pieces.set('nw', 'Chess_nlt45.svg');
+pieces.set('rw', 'Chess_rlt45.svg');
 class Square {
-    constructor(chess, board, piece, pos, sqColor) {
-        this.isMobile = /Mobi/i.test(navigator.userAgent);
-        this.chess = chess;
+    constructor(board, currentPiece, pos, sqColor) {
         this.board = board;
+        this.isMobile = /Mobi/i.test(navigator.userAgent);
         this.element = document.createElement('div');
         this.isDark = sqColor === 'dark';
         this.element.classList.add('square', sqColor);
@@ -27,9 +25,8 @@ class Square {
         this.piece.draggable = true;
         this.piece.style.display = 'none';
         this.piece.classList.add('piece');
-        this.update(piece);
+        this.update(currentPiece);
     }
-
     addEventListeners(pos) {
         const { board } = this;
         if (this.isMobile) {
@@ -37,72 +34,78 @@ class Square {
                 if (!board.selected) {
                     board.highlight(pos);
                     board.selected = pos;
-                } else if (board.selected === pos) {
+                }
+                else if (board.selected === pos) {
                     board.clearHighlighting();
-                    board.selected = null;
-                } else {
+                    board.selected = '';
+                }
+                else {
                     board.clearHighlighting();
                     const move = {
                         from: board.selected,
                         to: pos,
                     };
-                    board.selected = null;
-                    board.moveFn(move);
+                    board.selected = '';
+                    board.move(move);
                 }
             }, false);
-        } else {
+        }
+        else {
             this.element.addEventListener('dragstart', (event) => {
+                var _a;
                 board.highlight(pos);
-                event.dataTransfer.setData('text/plain', pos);
+                (_a = event.dataTransfer) === null || _a === void 0 ? void 0 : _a.setData('text/plain', pos);
             }, false);
             this.element.addEventListener('dragover', (event) => {
                 event.preventDefault();
             }, false);
             this.element.addEventListener('dragenter', (event) => {
-            // highlight potential drop target when the draggable element enters it
+                // highlight potential drop target when the draggable element enters it
                 event.preventDefault();
-                if (event.target.className.includes('square')) {
-                    event.target.classList.add('overlay', 'red');
+                if (event.target) {
+                    const square = event.target;
+                    square.classList.add('overlay', 'red');
                 }
             }, false);
             this.element.addEventListener('dragleave', (event) => {
-            // clear highlight from drop target when the draggable element leaves it
+                // clear highlight from drop target when the draggable element leaves it
                 event.preventDefault();
-                if (event.target.className.includes('square')) {
-                    event.target.classList.remove('overlay', 'red');
+                if (event.target) {
+                    const square = event.target;
+                    square.classList.remove('overlay', 'red');
                 }
             }, false);
             this.element.addEventListener('drop', (event) => {
                 event.preventDefault();
-                event.target.classList.remove('overlay', 'red');
-                const from = event.dataTransfer.getData('text/plain');
-                const to = pos;
-                const move = {
-                    from,
-                    to,
-                };
-                this.board.moveFn(move);
+                if (event.target && event.dataTransfer) {
+                    const square = event.target;
+                    square.classList.remove('overlay', 'red');
+                    const from = event.dataTransfer.getData('text/plain');
+                    const to = pos;
+                    const move = {
+                        from,
+                        to,
+                    };
+                    this.board.move(move);
+                }
             }, false);
             this.element.addEventListener('dragend', () => this.board.clearHighlighting());
         }
     }
-
     clearHighlighting() {
         this.element.classList.remove('overlay', 'purple');
     }
-
     highlight() {
         this.element.classList.add('overlay', 'purple');
     }
-
-    update(piece) {
-        if (piece) {
-            this.piece.src = `./assets/${pieces[piece.type + piece.color]}`;
+    update(updatePiece) {
+        if (updatePiece) {
+            this.piece.src = `./assets/${pieces.get(updatePiece.type + updatePiece.color)}`;
             this.piece.style.display = 'block';
-        } else {
+        }
+        else {
             this.piece.style.display = 'none';
         }
     }
 }
-
 export default Square;

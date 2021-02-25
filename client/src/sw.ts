@@ -1,24 +1,25 @@
-function receivePushNotification(event) {
+/* eslint-disable no-restricted-globals */
+function receivePushNotification(event: any) {
     console.log('[Service Worker] Push Received.');
 
     const {
-        image, tag, url, title, text,
+        tag, url, title, text,
     } = event.data.json();
 
     const options = {
         data: url,
         body: text,
-        icon: '/assets/favicon.ico',
+        icon: 'favicon.ico',
         vibrate: [200, 100, 200],
         tag,
         requireInteraction: true,
-        badge: '/assets/favicon.ico',
-        actions: [{ action: 'Detail', title: 'Goto Game', icon: 'assets/favicon.ico' }],
+        badge: 'favicon.ico',
+        actions: [{ action: 'Detail', title: 'Go to Game', icon: 'favicon.ico' }],
     };
     event.waitUntil(self.registration.showNotification(title, options));
 }
 
-function openPushNotification(event) {
+function openPushNotification(event: any) {
     console.log('[Service Worker] Notification click Received.', event.notification.data);
 
     event.notification.close();

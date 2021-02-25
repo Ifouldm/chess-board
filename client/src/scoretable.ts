@@ -1,5 +1,16 @@
+type game = {
+    _id: string,
+    player1: { name: string, score: number, colour: string },
+    player2: { name: string, score: number, colour: string },
+    pgn: string
+};
+
 class ScoreTable {
-    constructor(gameList) {
+    element: HTMLTableElement;
+
+    tableBody: HTMLElement;
+
+    constructor(gameList: game[]) {
         this.element = document.createElement('table');
         this.element.className = 'scoretable';
         this.tableBody = document.createElement('tbody');
@@ -13,7 +24,7 @@ class ScoreTable {
         this.update(gameList);
     }
 
-    update(gameList) {
+    update(gameList: game[]): void {
         const newTableBody = document.createElement('tbody');
         gameList.forEach((gameItem) => {
             const row = document.createElement('tr');
@@ -31,5 +42,4 @@ class ScoreTable {
         this.element.replaceChild(newTableBody, this.tableBody);
     }
 }
-
 export default ScoreTable;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const { Chess } = require('chess.js');
 const express = require('express');
 const uuid = require('uuid');
@@ -82,7 +83,7 @@ function setScores(gameId, p1Score, p2Score) {
 
 // Routes
 app.use(express.json());
-app.use('/', express.static('client'));
+app.use('/', express.static('client/public'));
 app.post('/subscription', subscriptionHandler.handlePushNotificationSubscription);
 
 // Socket events

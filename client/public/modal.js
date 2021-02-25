@@ -2,10 +2,10 @@ class Modal {
     constructor() {
         this.modal = document.getElementById('confirmModal');
         this.text = document.getElementById('modalText');
-        this.ok = document.getElementById('modalOk');
-        this.cancel = document.getElementById('modalCancel');
-        [this.close] = this.modal.getElementsByClassName('close');
-        this.close.onclick = () => {
+        const ok = document.getElementById('modalOk');
+        const cancel = document.getElementById('modalCancel');
+        const close = this.modal.getElementsByClassName('close').item(0);
+        close.onclick = () => {
             this.modal.style.display = 'none';
         };
         window.onclick = (event) => {
@@ -13,16 +13,17 @@ class Modal {
                 this.modal.style.display = 'none';
             }
         };
-        this.ok.onclick = () => {
+        ok.onclick = () => {
             this.modal.style.display = 'none';
-            if (this.okFn) this.okFn();
+            if (this.okFn)
+                this.okFn();
         };
-        this.cancel.onclick = () => {
+        cancel.onclick = () => {
             this.modal.style.display = 'none';
-            if (this.cancelFn) this.cancelFn();
+            if (this.cancelFn)
+                this.cancelFn();
         };
     }
-
     show(dialogText, okFn, cancelFn) {
         this.text.textContent = dialogText;
         this.modal.style.display = 'block';
@@ -30,5 +31,4 @@ class Modal {
         this.cancelFn = cancelFn;
     }
 }
-
 export default Modal;
