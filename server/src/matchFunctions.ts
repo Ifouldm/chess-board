@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import monk from 'monk';
 import { Chess } from './chess.js';
+import { io } from './socketEvents';
 
 const db = monk(process.env.MONGODBURI ?? '');
 

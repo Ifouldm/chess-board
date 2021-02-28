@@ -1,12 +1,20 @@
-import { Socket, Server } from 'socket.io';
-import { createServer } from 'http';
+import { Server, Socket } from 'socket.io';
+import { createServer } from 'https';
+import fs from 'fs';
+import path from 'path';
+import express from 'express';
 import { Chess, Move } from './chess.js';
 import { broadcastNotification } from './subscriptionHandler.js';
-
 import match from './matchFunctions.js';
 
-const httpServer = createServer(app);
-const io: Server = new Server(httpServer);
+const certOptions = {
+    key: fs.readFileSync(path.resolve('server/build/cert/server.key')),
+    cert: fs.readFileSync(path.resolve('server/build/cert/server.crt')),
+};
+
+const app = express();
+const httpServer = createServer(certOptions, app);
+const io = new Server(httpServer);
 
 io.on('connection', (socket: Socket) => {
     socket.on('command', (command: string) => {
@@ -144,3 +152,5 @@ io.on('connection', (socket: Socket) => {
         }
     });
 });
+
+export { httpServer, io, app };

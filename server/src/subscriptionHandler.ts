@@ -2,9 +2,12 @@ import { Request, Response } from 'express';
 import crypto from 'crypto';
 import webpush from 'web-push';
 import monk from 'monk';
-import { Move } from './chess';
+import dotenv from 'dotenv';
+import { Move } from './chess.js';
 
-const db = monk(process.env.MONGODBURI ?? '');
+dotenv.config();
+
+const db = monk(process.env.MONGODBURI ?? 'localhost');
 
 const subscriptions = db.get('subscriptions');
 

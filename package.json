@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest",
     "compile": "tsc -p client; tsc -p server",
-    "serve": "nodemon server/build/index.js"
+    "serve": "concurrently \"tsc -p client -w\" \"tsc -p server -w\" \"nodemon server/build/index.js\""
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   "homepage": "https://github.com/Ifouldm/chess-board#readme",
   "dependencies": {
     "chess.js": "^0.11.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "monk": "^7.3.3",
@@ -31,6 +32,7 @@
     "web-push": "^3.4.4"
   },
   "devDependencies": {
+    "concurrently": "^6.0.0",
     "@types/express": "^4.17.11",
     "@types/socket.io": "^2.1.13",
     "@types/socket.io-client": "^1.4.35",

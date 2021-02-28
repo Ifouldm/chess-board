@@ -117,3 +117,4 @@ dist
 
 # Project specific
 data/db.json
+server/.DS_Store
