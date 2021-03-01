@@ -31,7 +31,7 @@ function handlePushNotificationSubscription(req, res) {
 exports.handlePushNotificationSubscription = handlePushNotificationSubscription;
 function broadcastNotification(moveDetails) {
     const payload = JSON.stringify({
-        title: 'New Move',
+        title: 'Testing New Move',
         text: `From: ${moveDetails.from}, To: ${moveDetails.to}`,
         tag: 'new-move',
         url: '/',

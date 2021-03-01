@@ -1,5 +1,4 @@
 "use strict";
-/* eslint-disable no-restricted-globals */
 function receivePushNotification(event) {
     console.log('[Service Worker] Push Received.');
     const { tag, url, title, text, } = event.data.json();

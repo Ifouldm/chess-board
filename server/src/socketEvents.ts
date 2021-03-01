@@ -13,8 +13,8 @@ const certOptions = {
 };
 
 const app = express();
-const httpServer = createServer(certOptions, app);
-const io = new Server(httpServer);
+const httpsServer = createServer(certOptions, app);
+const io = new Server(httpsServer);
 
 io.on('connection', (socket: Socket) => {
     socket.on('command', (command: string) => {
@@ -153,4 +153,4 @@ io.on('connection', (socket: Socket) => {
     });
 });
 
-export { httpServer, io, app };
+export { httpsServer, io, app };

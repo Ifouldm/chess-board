@@ -33,7 +33,7 @@ function handlePushNotificationSubscription(req: Request, res: Response): void {
 
 function broadcastNotification(moveDetails: Move): void {
     const payload = JSON.stringify({
-        title: 'New Move',
+        title: 'Testing New Move',
         text: `From: ${moveDetails.from}, To: ${moveDetails.to}`,
         tag: 'new-move',
         url: '/',

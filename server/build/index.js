@@ -13,7 +13,7 @@ require("./socketEvents");
 dotenv_1.default.config();
 const db = monk_1.default(process.env.MONGODBURI || 'localhost');
 const matches = db.get('matches');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 443;
 // Middleware
 socketEvents_js_1.app.use(express_1.default.json());
 // Routes
@@ -25,10 +25,10 @@ matches.findOne({}, {}, (err, doc) => {
         console.error(err);
     }
     else if (doc) {
-        console.log(`https://localhost:3000?gameId=${doc._id}&token=${doc.player1.id}`);
-        console.log(`https://localhost:3000?gameId=${doc._id}&token=${doc.player2.id}`);
+        console.log(`https://localhost?gameId=${doc._id}&token=${doc.player1.id}`);
+        console.log(`https://localhost?gameId=${doc._id}&token=${doc.player2.id}`);
     }
 });
-socketEvents_js_1.httpServer.listen(port, () => {
+socketEvents_js_1.httpsServer.listen(port, () => {
     console.log(`Listening on https://localhost:${port}`);
 });

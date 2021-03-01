@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.app = exports.io = exports.httpServer = void 0;
+exports.app = exports.io = exports.httpsServer = void 0;
 const socket_io_1 = require("socket.io");
 const https_1 = require("https");
 const fs_1 = __importDefault(require("fs"));
@@ -27,9 +27,9 @@ const certOptions = {
 };
 const app = express_1.default();
 exports.app = app;
-const httpServer = https_1.createServer(certOptions, app);
-exports.httpServer = httpServer;
-const io = new socket_io_1.Server(httpServer);
+const httpsServer = https_1.createServer(certOptions, app);
+exports.httpsServer = httpsServer;
+const io = new socket_io_1.Server(httpsServer);
 exports.io = io;
 io.on('connection', (socket) => {
     socket.on('command', (command) => {

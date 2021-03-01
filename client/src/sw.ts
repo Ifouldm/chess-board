@@ -1,5 +1,4 @@
-/* eslint-disable no-restricted-globals */
-function receivePushNotification(event: any) {
+function receivePushNotification(event: Event) {
     console.log('[Service Worker] Push Received.');
 
     const {
@@ -19,7 +18,7 @@ function receivePushNotification(event: any) {
     event.waitUntil(self.registration.showNotification(title, options));
 }
 
-function openPushNotification(event: any) {
+function openPushNotification(event: Event) {
     console.log('[Service Worker] Notification click Received.', event.notification.data);
 
     event.notification.close();
