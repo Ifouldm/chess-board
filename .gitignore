@@ -117,4 +117,7 @@ dist
 
 # Project specific
 data/db.json
-server/.DS_Store
+*.DS_Store
+server/build/cert/*
+server/build/*
+client/public/*

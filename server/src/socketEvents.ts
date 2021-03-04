@@ -1,20 +1,13 @@
 import { Server, Socket } from 'socket.io';
-import { createServer } from 'https';
-import fs from 'fs';
-import path from 'path';
+import { createServer } from 'http';
 import express from 'express';
 import { Chess, Move } from './chess.js';
 import { broadcastNotification } from './subscriptionHandler.js';
 import match from './matchFunctions.js';
 
-const certOptions = {
-    key: fs.readFileSync(path.resolve('server/build/cert/server.key')),
-    cert: fs.readFileSync(path.resolve('server/build/cert/server.crt')),
-};
-
 const app = express();
-const httpsServer = createServer(certOptions, app);
-const io = new Server(httpsServer);
+const httpServer = createServer(app);
+const io = new Server(httpServer);
 
 io.on('connection', (socket: Socket) => {
     socket.on('command', (command: string) => {
@@ -83,7 +76,7 @@ io.on('connection', (socket: Socket) => {
                 delete game.player2.id;
                 game.pgn = pgn;
                 io.emit('update', game);
-                broadcastNotification(move);
+                broadcastNotification(gameId, move, colour);
             } else {
                 console.error('unauthorised');
             }
@@ -153,4 +146,4 @@ io.on('connection', (socket: Socket) => {
     });
 });
 
-export { httpsServer, io, app };
+export { httpServer, io, app };

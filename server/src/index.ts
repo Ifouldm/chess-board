@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import monk from 'monk';
 import { handlePushNotificationSubscription } from './subscriptionHandler.js';
-import { app, httpsServer } from './socketEvents.js';
+import { app, httpServer } from './socketEvents.js';
 
 // Socket events
 import './socketEvents';
@@ -24,11 +24,11 @@ matches.findOne({}, {}, (err, doc) => {
     if (err) {
         console.error(err);
     } else if (doc) {
-        console.log(`https://localhost?gameId=${doc._id}&token=${doc.player1.id}`);
-        console.log(`https://localhost?gameId=${doc._id}&token=${doc.player2.id}`);
+        console.log(`http://localhost:${port}?gameId=${doc._id}&token=${doc.player1.id}`);
+        console.log(`http://localhost:${port}?gameId=${doc._id}&token=${doc.player2.id}`);
     }
 });
 
-httpsServer.listen(port, () => {
-    console.log(`Listening on https://localhost:${port}`);
+httpServer.listen(port, () => {
+    console.log(`Listening on http://localhost:${port}`);
 });

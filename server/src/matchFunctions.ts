@@ -7,7 +7,7 @@ const db = monk(process.env.MONGODBURI ?? '');
 
 const matches = db.get('matches');
 
-type player = {id?: string, name: string, score: number, colour: string}
+type player = {id?: string, name: string, score: number, colour: 'b' | 'w'}
 type gameModel = {_id: string, player1: player, player2: player, pgn: string};
 
 async function getGame(gameId: string): Promise<gameModel> {

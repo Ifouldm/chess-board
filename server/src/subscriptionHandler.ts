@@ -25,22 +25,24 @@ function createHash(input: string) {
 }
 
 function handlePushNotificationSubscription(req: Request, res: Response): void {
-    const subscriptionRequest = req.body;
-    const susbscriptionId = createHash(JSON.stringify(subscriptionRequest));
-    subscriptions.insert(subscriptionRequest);
+    const { gameId, colour, sub } = req.body;
+    const susbscriptionId = createHash(JSON.stringify(sub));
+    subscriptions.insert({ gameId, colour, sub });
     res.status(201).json({ id: susbscriptionId });
 }
 
-function broadcastNotification(moveDetails: Move): void {
+function broadcastNotification(gameId: string, moveDetails: Move, colour: 'w' | 'b'): void {
     const payload = JSON.stringify({
-        title: 'Testing New Move',
-        text: `From: ${moveDetails.from}, To: ${moveDetails.to}`,
+        title: 'New Move',
+        data: { gameId },
+        text: `${colour === 'w' ? 'White' : 'Black'} Moved \n From: ${moveDetails.from}, To: ${moveDetails.to}`,
         tag: 'new-move',
-        url: '/',
+        url: `/?gameId=${gameId}`,
     });
-    subscriptions.find({}).then((subs) => {
-        for (const sub of subs) {
-            webpush.sendNotification(sub, payload)
+    const opponent = colour === 'w' ? 'b' : 'w';
+    subscriptions.findOne({ gameId, colour: opponent }).then((document) => {
+        if (document) {
+            webpush.sendNotification(document.sub, payload)
                 .then()
                 .catch((err) => console.error(err));
         }

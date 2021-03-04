@@ -57,13 +57,12 @@ if (pushNotificationSuported) {
         if (!subscription) {
             initializePushNotifications().then(() => {
                 createNotificationSubscription().then((sub) => {
-                    subscription = sub;
                     fetch('/subscription', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(subscription),
+                        body: JSON.stringify({ gameId, colour, sub }),
                     })
                         .then()
                         .catch((err) => console.log(err));

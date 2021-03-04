@@ -1,4 +1,4 @@
-import {Chess} from './lib/chess.js';
+import { Chess } from './lib/chess.js';
 
 type player = { name: string, colour: string, score: number };
 
@@ -56,7 +56,7 @@ class Toolbar {
             const historyLink = document.createElement('a');
             historyLink.href = '#';
             historyLink.textContent = move;
-            historyElement.className = index % 2 === 0 ? 'darkMove' : 'lightMove';
+            historyElement.className = (chess.history().length - index) % 2 === 0 ? 'darkMove' : 'lightMove';
             historyElement.append(historyLink);
             history.append(historyElement);
         });

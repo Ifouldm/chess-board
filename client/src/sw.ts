@@ -1,12 +1,13 @@
-function receivePushNotification(event: Event) {
+declare let self: ServiceWorkerGlobalScope;
+function receivePushNotification(event: PushEvent) {
     console.log('[Service Worker] Push Received.');
 
     const {
-        tag, url, title, text,
-    } = event.data.json();
+        tag, gameId, title, text,
+    } = event.data?.json();
 
     const options = {
-        data: url,
+        data: gameId,
         body: text,
         icon: 'favicon.ico',
         vibrate: [200, 100, 200],
@@ -18,12 +19,29 @@ function receivePushNotification(event: Event) {
     event.waitUntil(self.registration.showNotification(title, options));
 }
 
-function openPushNotification(event: Event) {
-    console.log('[Service Worker] Notification click Received.', event.notification.data);
-
+function openPushNotification(event: NotificationEvent) {
+    const { gameId } = event.notification.data;
+    console.log('[Service Worker] Notification click Received.', gameId);
+    console.log(self.clients);
+    event.waitUntil(self.clients.matchAll({ type: 'window' }).then((genClientArr) => {
+        const clientsArr = genClientArr as WindowClient[];
+        // If a Window tab matching the targeted URL already exists, focus that;
+        const hadWindowToFocus = clientsArr
+            .some((windCli) => (windCli.url.includes(gameId)
+                ? (windCli.focus(), true)
+                : false));
+        // Otherwise, open a new tab to the applicable URL and focus it.
+        if (!hadWindowToFocus) {
+            self.clients.openWindow(`/?gameId=${gameId}`).then((windCli) => {
+                console.log(windCli);
+                windCli?.focus();
+            });
+        }
+    }));
     event.notification.close();
-    event.waitUntil(clients.openWindow(event.notification.data));
 }
 
 self.addEventListener('push', receivePushNotification);
 self.addEventListener('notificationclick', openPushNotification);
+
+export {};
