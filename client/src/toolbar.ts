@@ -1,4 +1,4 @@
-import {Chess} from './lib/chess.js';
+import { Chess } from './lib/chess.js';
 
 type player = { name: string, colour: string, score: number };
 
