@@ -9,12 +9,16 @@ services:
     environment:
       - MONGO_USERNAME=$MONGO_USERNAME
       - MONGO_PASSWORD=$MONGO_PASSWORD
-      - MONGO_HOSTNAME=db
+      - MONGO_HOSTNAME=$MONGO_HOST
       - MONGO_PORT=$MONGO_PORT
       - MONGO_DB=$MONGO_DB
-  db:
+    networks:
+      - app-network
+    depends_on: 
+      - mongo
+  mongo:
     image: mongo
-    container_name: db
+    container_name: $MONGO_HOST
     env_file: .env
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME

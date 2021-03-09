@@ -3,7 +3,11 @@ import monk from 'monk';
 import { Chess } from './chess.js';
 import { io } from './socketEvents';
 
-const db = monk(process.env.MONGODBURI ?? '');
+const mongoURI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+
+console.log(mongoURI);
+
+const db = monk(mongoURI || 'localhost');
 
 const matches = db.get('matches');
 
