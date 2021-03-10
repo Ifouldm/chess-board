@@ -7,9 +7,9 @@ import { Move } from './lib/chess.js';
 
 dotenv.config();
 
-const mongoURI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+const mongoURI = `${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}}`;
 
-const db = monk(mongoURI || 'localhost');
+const db = monk(mongoURI || 'localhost', { useNewUrlParser: true });
 
 const subscriptions = db.get('subscriptions');
 

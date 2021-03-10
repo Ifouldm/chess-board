@@ -3,12 +3,13 @@ import monk from 'monk';
 import { Chess } from './lib/chess.js';
 import { io } from './socketEvents';
 
-// const mongoURI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
-const mongoURI = 'mongodb://mongodb:27017/chess';
+const mongoURI = `${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}}`;
 
-const db = monk(mongoURI || 'localhost');
+const db = monk(mongoURI || 'localhost', { useNewUrlParser: true });
 
 const matches = db.get('matches');
+
+console.log(matches);
 
 type player = {id?: string, name: string, score: number, colour: 'b' | 'w'}
 type gameModel = {_id: string, player1: player, player2: player, pgn: string};

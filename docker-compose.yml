@@ -5,6 +5,7 @@ services:
     container_name: chess
     ports:
       - "3000:3000"
+    restart: always
     env_file: .env
     environment:
       - MONGO_USERNAME=$MONGO_USERNAME
@@ -12,19 +13,20 @@ services:
       - MONGO_HOST=$MONGO_HOST
       - MONGO_PORT=$MONGO_PORT
       - MONGO_DB=$MONGO_DB
-    environment:
-      WAIT_HOSTS: mongo:27017
     networks:
       - app-network
     depends_on: 
       - mongo
+    environment:
+      WAIT_HOSTS: mongo:27017
+    command: sh -c "/wait && npm start"
   mongo:
     image: mongo
     container_name: $MONGO_HOST
+    ports: 
+      - "$MONGO_PORT:27017"
     env_file: .env
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
+
     volumes:
       - dbdata:/data/db
     networks:
