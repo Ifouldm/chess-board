@@ -38,7 +38,7 @@ class Board {
     highlight(pos: string): void {
         const moves = this.chess.moves({ square: pos, verbose: true }) as Move[];
         moves.forEach((move: Move) => {
-            this.squares.get(move.to)!.highlight();
+            this.squares.get(move.to)?.highlight();
         });
     }
 

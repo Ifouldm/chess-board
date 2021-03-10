@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import webpush from 'web-push';
 import monk from 'monk';
 import dotenv from 'dotenv';
-import { Move } from './chess.js';
+import { Move } from './lib/chess.js';
 
 dotenv.config();
 

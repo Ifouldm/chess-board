@@ -7,7 +7,8 @@
     "test": "jest",
     "compile": "tsc -p client; tsc -p server",
     "serve": "concurrently \"tsc -p client -w\" \"tsc -p server -w\" \"nodemon server/build/index.js\"",
-    "start": "node server/build/index.js"
+    "start": "node server/build/index.js",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -21,12 +22,12 @@
   "homepage": "https://github.com/Ifouldm/chess-board#readme",
   "dependencies": {
     "chess.js": "^0.11.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "monk": "^7.3.3",
     "socket.io": "^3.1.1",
     "uuid": "^8.3.2",
-    "web-push": "^3.4.4",
-    "dotenv": "^8.2.0"
+    "web-push": "^3.4.4"
   },
   "devDependencies": {
     "@types/express": "^4.17.11",

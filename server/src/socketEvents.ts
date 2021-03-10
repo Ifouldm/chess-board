@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { createServer } from 'http';
 import express from 'express';
-import { Chess, Move } from './chess.js';
+import { Chess, Move } from './lib/chess.js';
 import { broadcastNotification } from './subscriptionHandler.js';
 import match from './matchFunctions.js';
 

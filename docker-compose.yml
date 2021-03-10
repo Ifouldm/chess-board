@@ -1,17 +1,19 @@
 version: '3'
 services: 
-  web:
+  chess:
     build: .
-    container_name: web
+    container_name: chess
     ports:
       - "3000:3000"
     env_file: .env
     environment:
       - MONGO_USERNAME=$MONGO_USERNAME
       - MONGO_PASSWORD=$MONGO_PASSWORD
-      - MONGO_HOSTNAME=$MONGO_HOST
+      - MONGO_HOST=$MONGO_HOST
       - MONGO_PORT=$MONGO_PORT
       - MONGO_DB=$MONGO_DB
+    environment:
+      WAIT_HOSTS: mongo:27017
     networks:
       - app-network
     depends_on: 

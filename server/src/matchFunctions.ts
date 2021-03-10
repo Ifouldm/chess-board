@@ -1,11 +1,10 @@
 import uuid from 'uuid';
 import monk from 'monk';
-import { Chess } from './chess.js';
+import { Chess } from './lib/chess.js';
 import { io } from './socketEvents';
 
-const mongoURI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
-
-console.log(mongoURI);
+// const mongoURI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+const mongoURI = 'mongodb://mongodb:27017/chess';
 
 const db = monk(mongoURI || 'localhost');
 
