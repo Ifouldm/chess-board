@@ -7,10 +7,13 @@ import { Move } from './lib/chess.js';
 
 dotenv.config();
 
-const mongoURI = `${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}}`;
-
-const db = monk(mongoURI || 'localhost', { useNewUrlParser: true });
-
+// Database Connection
+let mongoURI = 'localhost';
+if (process.env.MONGO_HOST
+&& process.env.MONGO_DB) {
+    mongoURI = `mongodb://${process.env.MONGO_HOST}/${process.env.MONGO_DB}`;
+}
+const db = monk(mongoURI, { useNewUrlParser: true });
 const subscriptions = db.get('subscriptions');
 
 const vapidKeys = {

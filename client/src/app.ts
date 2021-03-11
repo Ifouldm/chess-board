@@ -65,7 +65,7 @@ if (pushNotificationSuported) {
                         body: JSON.stringify({ gameId, colour, sub }),
                     })
                         .then()
-                        .catch((err) => console.log(err));
+                        .catch((err) => console.error(err));
                 });
             });
         }

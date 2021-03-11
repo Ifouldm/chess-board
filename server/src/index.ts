@@ -9,13 +9,15 @@ import './socketEvents';
 
 dotenv.config();
 
-const mongoURI = `${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}}`;
-
-const db = monk(mongoURI || 'localhost', { useNewUrlParser: true });
-
+// Database Connection
+let mongoURI = 'localhost';
+if (process.env.MONGO_HOST
+&& process.env.MONGO_DB) {
+    mongoURI = `mongodb://${process.env.MONGO_HOST}/${process.env.MONGO_DB}`;
+}
+const db = monk(mongoURI, { useNewUrlParser: true });
 const matches = db.get('matches');
-
-const port = process.env.PORT || 443;
+const port = process.env.PORT || 8080;
 
 // Middleware
 app.use(express.json());

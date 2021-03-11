@@ -1,15 +1,16 @@
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 import monk from 'monk';
 import { Chess } from './lib/chess.js';
 import { io } from './socketEvents';
 
-const mongoURI = `${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}}`;
-
-const db = monk(mongoURI || 'localhost', { useNewUrlParser: true });
-
+// Database Connection
+let mongoURI = 'localhost';
+if (process.env.MONGO_HOST
+&& process.env.MONGO_DB) {
+    mongoURI = `mongodb://${process.env.MONGO_HOST}/${process.env.MONGO_DB}`;
+}
+const db = monk(mongoURI, { useNewUrlParser: true });
 const matches = db.get('matches');
-
-console.log(matches);
 
 type player = {id?: string, name: string, score: number, colour: 'b' | 'w'}
 type gameModel = {_id: string, player1: player, player2: player, pgn: string};
@@ -31,10 +32,10 @@ async function createMatch(player1: string, player2: string): Promise<void> {
     const player2Colour = player1Colour === 'w' ? 'b' : 'w';
     const game = {
         player1: {
-            id: uuid.v4(), name: player1, score: 0, colour: player1Colour,
+            id: uuid(), name: player1, score: 0, colour: player1Colour,
         },
         player2: {
-            id: uuid.v4(), name: player2, score: 0, colour: player2Colour,
+            id: uuid(), name: player2, score: 0, colour: player2Colour,
         },
         pgn: '',
     };
