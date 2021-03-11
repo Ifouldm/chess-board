@@ -1,6 +1,13 @@
-const crypto = require('crypto');
-const webpush = require('web-push');
-const db = require('monk')(process.env.MONGODBURI);
+import { Request, Response } from 'express';
+import crypto from 'crypto';
+import webpush from 'web-push';
+import monk from 'monk';
+import dotenv from 'dotenv';
+import { Move } from './chess.js';
+
+dotenv.config();
+
+const db = monk(process.env.MONGODBURI ?? 'localhost');
 
 const subscriptions = db.get('subscriptions');
 
@@ -11,26 +18,25 @@ const vapidKeys = {
 
 webpush.setVapidDetails('http://obidex.com', vapidKeys.publicKey, vapidKeys.privateKey);
 
-function createHash(input) {
+function createHash(input: string) {
     const md5sum = crypto.createHash('md5');
     md5sum.update(Buffer.from(input));
     return md5sum.digest('hex');
 }
 
-function handlePushNotificationSubscription(req, res) {
+function handlePushNotificationSubscription(req: Request, res: Response): void {
     const subscriptionRequest = req.body;
     const susbscriptionId = createHash(JSON.stringify(subscriptionRequest));
     subscriptions.insert(subscriptionRequest);
     res.status(201).json({ id: susbscriptionId });
 }
 
-function broadcastNotification(moveDetails) {
+function broadcastNotification(moveDetails: Move): void {
     const payload = JSON.stringify({
-        title: 'New Move',
+        title: 'Testing New Move',
         text: `From: ${moveDetails.from}, To: ${moveDetails.to}`,
-        image: '/assets/icon.png',
         tag: 'new-move',
-        url: '#',
+        url: '/',
     });
     subscriptions.find({}).then((subs) => {
         for (const sub of subs) {
@@ -41,4 +47,4 @@ function broadcastNotification(moveDetails) {
     });
 }
 
-module.exports = { handlePushNotificationSubscription, broadcastNotification };
+export { handlePushNotificationSubscription, broadcastNotification };

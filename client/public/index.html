@@ -9,6 +9,19 @@
 </head>
 
 <body>
+    <div id="chat" class="chat">
+        <div class="row">
+            Chat:
+        </div>
+        <div class="scrollableArea">
+            <ul id="messageList" class="messageList">
+            </ul>
+        </div>
+        <div class="row">
+            <input type="text" id="message" class="textinput">
+            <button class="sm-button" id="submitMessage">+</button>
+        </div>
+    </div>
     <div id="loading" class="loading">Loading</div>
     <div id="app"></div>
     <div id="toolbar" class="toolbar">
@@ -70,7 +83,8 @@
             Command:
         </div>
         <div class="row">
-            <input id=command class="textinput">
+            <input type="text" id="command" class="textinput">
+            <button class="sm-button" id="submitCommand">+</button>
         </div>
     </div>
     <div id="confirmModal" class="modal">
@@ -80,7 +94,7 @@
             <button id="modalOk" class="button">Ok</button><button id="modalCancel" class="button">Cancel</button>
         </div>
     </div>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="/lib/socket.io.js"></script>
     <script type="module" src="app.js"></script>
 </body>
 

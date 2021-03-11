@@ -3,43 +3,23 @@ const pushServerPublicKey = 'BL4eApB5vjociEAt6cIMFlIC0CUEl6l7JiNIzVrG1h4ReqhvY2z
 /**
  * checks if Push notification and service workers are supported by your browser
  */
-function isPushNotificationSupported() {
+function isPushNotificationSupported(): boolean {
     return 'serviceWorker' in navigator && 'PushManager' in window;
 }
 
 /**
  * Get user consent
  */
-function initializePushNotifications() {
+function initializePushNotifications(): Promise<NotificationPermission> {
     return Notification.requestPermission((result) => result);
-}
-/**
- * shows a notification
- */
-function sendNotification() {
-    const img = '/images/jason-leung-HM6TMmevbZQ-unsplash.jpg';
-    const text = 'Take a look at this brand new t-shirt!';
-    const title = 'New Product Available';
-    const options = {
-        body: text,
-        icon: '/images/jason-leung-HM6TMmevbZQ-unsplash.jpg',
-        vibrate: [200, 100, 200],
-        tag: 'new-product',
-        image: img,
-        badge: 'https://spyna.it/icons/android-icon-192x192.png',
-        actions: [{ action: 'Detail', title: 'View', icon: 'https://via.placeholder.com/128/ff0000' }],
-    };
-    navigator.serviceWorker.ready.then((serviceWorker) => {
-        serviceWorker.showNotification(title, options);
-    });
 }
 
 /**
  *
  */
-function registerServiceWorker() {
+function registerServiceWorker():void {
     navigator.serviceWorker.register('/sw.js').then((swRegistration) => {
-        // console.log(swRegistration);
+        console.log('registered:', swRegistration);
     });
 }
 
@@ -48,7 +28,7 @@ function registerServiceWorker() {
  * using the registered service worker creates a push notification subscription and returns it
  *
  */
-function createNotificationSubscription() {
+function createNotificationSubscription(): Promise<ServiceWorkerRegistration | PushSubscription> {
     // wait for service worker installation to be ready, and then
     return navigator.serviceWorker.ready.then((serviceWorker) => serviceWorker.pushManager
         .subscribe({
@@ -64,7 +44,7 @@ function createNotificationSubscription() {
 /**
  * returns the subscription if present or nothing
  */
-function getUserSubscription() {
+function getUserSubscription(): Promise<ServiceWorkerRegistration | PushSubscription | null> {
     // wait for service worker installation to be ready, and then
     return navigator.serviceWorker.ready
         .then((serviceWorker) => serviceWorker.pushManager.getSubscription())
@@ -75,7 +55,6 @@ export {
     isPushNotificationSupported,
     initializePushNotifications,
     registerServiceWorker,
-    sendNotification,
     createNotificationSubscription,
     getUserSubscription,
 };
