@@ -1,5 +1,7 @@
 import { Chess } from './lib/chess.js';
 
+import { marioPieces as pieces } from './pieces.js';
+
 type player = { name: string, colour: string, score: number };
 
 class Toolbar {
@@ -22,6 +24,14 @@ class Toolbar {
                 this.promotionSelection = promotionSel.value;
             }
         });
+        const queenIcon = document.getElementById('queenIcon');
+        queenIcon?.setAttribute('src', `assets/${pieces.get('qb')}`);
+        const knightIcon = document.getElementById('knightIcon');
+        knightIcon?.setAttribute('src', `assets/${pieces.get('nb')}`);
+        const bishopIcon = document.getElementById('bishopIcon');
+        bishopIcon?.setAttribute('src', `assets/${pieces.get('bb')}`);
+        const rookIcon = document.getElementById('rookIcon');
+        rookIcon?.setAttribute('src', `assets/${pieces.get('rb')}`);
         this.player1 = { name: 'p1', colour: 'w', score: 0 };
         this.player2 = { name: 'p1', colour: 'w', score: 0 };
     }

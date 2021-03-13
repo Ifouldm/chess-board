@@ -9,6 +9,19 @@
 </head>
 
 <body>
+    <div id="chat" class="chat">
+        <div class="row">
+            Chat:
+        </div>
+        <div class="scrollableArea">
+            <ul id="messageList" class="messageList">
+            </ul>
+        </div>
+        <div class="row">
+            <input type="text" id="message" class="textinput">
+            <button class="sm-button" id="submitMessage">+</button>
+        </div>
+    </div>
     <div id="loading" class="loading">Loading</div>
     <div id="app"></div>
     <div id="toolbar" class="toolbar">
@@ -33,19 +46,19 @@
             <div id="promotion" class="icons">
                 <label for="bishop">
                     <input class="selection" type="radio" id="bishop" name="promotion" value="b">
-                    <img class="img" src="./assets/Chess_bdt45.svg" alt="Bishop">
+                    <img class="img" src="#" id=bishopIcon alt="Bishop">
                 </label>
                 <label for="knight">
                     <input class="selection" type="radio" id="knight" name="promotion" value="n">
-                    <img class="img" src="./assets/Chess_ndt45.svg" alt="Knight">
+                    <img class="img" src="#" id=knightIcon alt="Knight">
                 </label>
                 <label for="rook">
                     <input class="selection" type="radio" id="rook" name="promotion" value="r">
-                    <img class="img" src="./assets/Chess_rdt45.svg" alt="Rook">
+                    <img class="img" src="#" id=rookIcon alt="Rook">
                 </label>
                 <label for="queen">
                     <input class="selection" type="radio" id="queen" checked name="promotion" value="q">
-                    <img class="img" src="./assets/Chess_qdt45.svg" alt="Queen">
+                    <img class="img" src="#" id=queenIcon alt="Queen">
                 </label>
             </div>
         </div>
@@ -70,7 +83,8 @@
             Command:
         </div>
         <div class="row">
-            <input id=command class="textinput">
+            <input type="text" id="command" class="textinput">
+            <button class="sm-button" id="submitCommand">+</button>
         </div>
     </div>
     <div id="confirmModal" class="modal">

@@ -11,6 +11,7 @@ import {
     getUserSubscription,
     createNotificationSubscription,
 } from './push-notifications.js';
+import './chat.js';
 
 // Types
 type game = {
@@ -108,6 +109,12 @@ if (commandField) {
         if (event.key === 'Enter') {
             socket.emit('command', commandField.value, token);
         }
+    });
+}
+const commandButton = document.getElementById('submitCommand') as HTMLButtonElement;
+if (commandButton) {
+    commandButton.addEventListener('click', () => {
+        socket.emit('command', commandField.value, token);
     });
 }
 
