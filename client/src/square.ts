@@ -1,20 +1,9 @@
 import Board from './board.js';
+import { pieces } from './pieces.js';
 
 type piece = { type: string, color: string } | null;
 
-const pieces = new Map<string, string>();
-pieces.set('pb', 'Chess_pdt45.svg');
-pieces.set('kb', 'Chess_kdt45.svg');
-pieces.set('qb', 'Chess_qdt45.svg');
-pieces.set('bb', 'Chess_bdt45.svg');
-pieces.set('nb', 'Chess_ndt45.svg');
-pieces.set('rb', 'Chess_rdt45.svg');
-pieces.set('pw', 'Chess_plt45.svg');
-pieces.set('kw', 'Chess_klt45.svg');
-pieces.set('qw', 'Chess_qlt45.svg');
-pieces.set('bw', 'Chess_blt45.svg');
-pieces.set('nw', 'Chess_nlt45.svg');
-pieces.set('rw', 'Chess_rlt45.svg');
+console.log(pieces);
 
 class Square {
     isMobile: boolean;
