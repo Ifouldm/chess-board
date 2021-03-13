@@ -1,3 +1,4 @@
 client/public/*
 client/src/lib/*
 server/build/*
+server/src/lib/*

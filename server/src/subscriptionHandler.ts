@@ -3,12 +3,17 @@ import crypto from 'crypto';
 import webpush from 'web-push';
 import monk from 'monk';
 import dotenv from 'dotenv';
-import { Move } from './chess.js';
+import { Move } from './lib/chess.js';
 
 dotenv.config();
 
-const db = monk(process.env.MONGODBURI ?? 'localhost');
-
+// Database Connection
+let mongoURI = 'localhost';
+if (process.env.MONGO_HOST
+&& process.env.MONGO_DB) {
+    mongoURI = `mongodb://${process.env.MONGO_HOST}/${process.env.MONGO_DB}`;
+}
+const db = monk(mongoURI, { useNewUrlParser: true });
 const subscriptions = db.get('subscriptions');
 
 const vapidKeys = {
@@ -25,22 +30,24 @@ function createHash(input: string) {
 }
 
 function handlePushNotificationSubscription(req: Request, res: Response): void {
-    const subscriptionRequest = req.body;
-    const susbscriptionId = createHash(JSON.stringify(subscriptionRequest));
-    subscriptions.insert(subscriptionRequest);
+    const { gameId, colour, sub } = req.body;
+    const susbscriptionId = createHash(JSON.stringify(sub));
+    subscriptions.insert({ gameId, colour, sub });
     res.status(201).json({ id: susbscriptionId });
 }
 
-function broadcastNotification(moveDetails: Move): void {
+function broadcastNotification(gameId: string, moveDetails: Move, colour: 'w' | 'b'): void {
     const payload = JSON.stringify({
-        title: 'Testing New Move',
-        text: `From: ${moveDetails.from}, To: ${moveDetails.to}`,
+        title: 'New Move',
+        data: { gameId },
+        text: `${colour === 'w' ? 'White' : 'Black'} Moved \n From: ${moveDetails.from}, To: ${moveDetails.to}`,
         tag: 'new-move',
-        url: '/',
+        url: `/?gameId=${gameId}`,
     });
-    subscriptions.find({}).then((subs) => {
-        for (const sub of subs) {
-            webpush.sendNotification(sub, payload)
+    const opponent = colour === 'w' ? 'b' : 'w';
+    subscriptions.findOne({ gameId, colour: opponent }).then((document) => {
+        if (document) {
+            webpush.sendNotification(document.sub, payload)
                 .then()
                 .catch((err) => console.error(err));
         }
