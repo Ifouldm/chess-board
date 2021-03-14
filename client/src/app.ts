@@ -16,8 +16,8 @@ import './chat.js';
 // Types
 type game = {
 _id: string,
-player1: { name: string, score: number, colour: string },
-player2: { name: string, score: number, colour: string },
+player1: { name: string, score: number, colour: 'w' | 'b' },
+player2: { name: string, score: number, colour: 'w' | 'b' },
 pgn: string
 };
 
@@ -44,7 +44,8 @@ function getParameterByName(name: string, url = window.location.href) {
 // Query parameters & globals
 const gameId = getParameterByName('gameId');
 const token = getParameterByName('token');
-let colour: string;
+let playerNo: 1 | 2;
+let playerColour: 'w' | 'b' | null;
 
 socket.emit('auth', gameId, token);
 
@@ -61,7 +62,7 @@ if (isPushNotificationSupported()) {
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ gameId, colour, sub }),
+                        body: JSON.stringify({ gameId, token, sub }),
                     })
                         .then()
                         .catch((err) => console.error(err));
@@ -118,7 +119,7 @@ if (commandButton) {
 
 // Socket events
 function movePiece(moveObj: Move) {
-    if (colour === chess.turn()) {
+    if (playerColour === chess.turn()) {
         moveObj.promotion = toolbar.promotionSelection;
         if (chess.move(moveObj)) {
             socket.emit('move', gameId, token, moveObj);
@@ -131,17 +132,19 @@ socket.on('update', (gameUpdate: game) => {
         chess.load_pgn(gameUpdate.pgn);
         toolbar.player1.score = gameUpdate.player1.score;
         toolbar.player2.score = gameUpdate.player2.score;
+        toolbar.set(gameUpdate.player1, gameUpdate.player2, playerColour);
         update();
         audioMove.play();
     }
 });
 
-socket.on('initialState', (gameState: game, playerColour: 'w' | 'b') => {
+socket.on('initialState', (gameState: game, pColour: 'w' | 'b' | null, pNo: 1 | 2) => {
     if (gameState._id === gameId) {
         loading.style.display = 'none';
-        colour = playerColour;
-        if (colour === 'b') chessBoard.generateSquares('b');
-        toolbar.set(gameState.player1, gameState.player2, colour);
+        playerColour = pColour;
+        playerNo = pNo;
+        if (playerColour === 'b') chessBoard.generateSquares('b');
+        toolbar.set(gameState.player1, gameState.player2, playerColour);
         chess.load_pgn(gameState.pgn);
         app.appendChild(chessBoard.element);
         update();
@@ -149,13 +152,13 @@ socket.on('initialState', (gameState: game, playerColour: 'w' | 'b') => {
 });
 
 socket.on('concedeNotification', (gameRef: string, playerName: string, concedeColour: 'w' | 'b') => {
-    if (gameRef === gameId && concedeColour !== colour) {
+    if (gameRef === gameId && concedeColour !== playerColour) {
         modal.show(`${playerName} conceded, ok to accept`);
     }
 });
 
 socket.on('drawOffer', (gameRef: string, playerName: string, drawColour: 'w' | 'b') => {
-    if (gameRef === gameId && drawColour !== colour) {
+    if (gameRef === gameId && drawColour !== playerColour) {
         modal.show(`${playerName} offered a draw, ok to accept, cancel to deny`, () => {
             socket.emit('drawOfferReponse', gameId, token, true);
         }, () => {
@@ -165,7 +168,7 @@ socket.on('drawOffer', (gameRef: string, playerName: string, drawColour: 'w' | '
 });
 
 socket.on('drawNotification', (gameRef: string, accepted: boolean, resColour: 'w' | 'b', resName: string) => {
-    if (gameRef === gameId && resColour !== colour) {
+    if (gameRef === gameId && resColour !== playerColour) {
         modal.show(`${resName} ${accepted ? 'accepted' : 'declined'} a draw, ok to continue`);
     }
 });

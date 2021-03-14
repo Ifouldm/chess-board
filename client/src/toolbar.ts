@@ -2,10 +2,10 @@ import { Chess } from './lib/chess.js';
 
 import { pieces } from './pieces.js';
 
-type player = { name: string, colour: string, score: number };
+type player = { name: string, colour: 'w' | 'b' | null, score: number };
 
 class Toolbar {
-    colour: string;
+    colour: 'w' | 'b' | null;
 
     promotionSelection: string;
 
@@ -100,7 +100,7 @@ class Toolbar {
         this.player2 = { name: 'p1', colour: 'w', score: 0 };
     }
 
-    set(player1: player, player2: player, colour: string): void {
+    set(player1: player, player2: player, colour: 'w' | 'b' | null): void {
         this.colour = colour;
         this.player1 = player1;
         this.player2 = player2;
