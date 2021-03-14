@@ -24,7 +24,6 @@ pgn: string
 // DOM elements
 const app = document.getElementById('app') as HTMLDivElement;
 const loading = document.getElementById('loading') as HTMLDivElement;
-const toolbarElement = document.getElementById('toolbar') as HTMLDivElement;
 
 // Audio
 const audioMove = new Audio('/assets/move.ogg');
@@ -50,8 +49,7 @@ let colour: string;
 socket.emit('auth', gameId, token);
 
 // Push services
-const pushNotificationSuported = isPushNotificationSupported();
-if (pushNotificationSuported) {
+if (isPushNotificationSupported()) {
     // register the service worker: file "sw.js" in the root of our project
     registerServiceWorker();
     getUserSubscription().then((subscription) => {
@@ -76,7 +74,7 @@ if (pushNotificationSuported) {
 // Setup and draw
 const chess = new Chess();
 const chessBoard = new Board(chess, movePiece);
-const toolbar = new Toolbar(toolbarElement);
+const toolbar = new Toolbar();
 const modal = new Modal();
 update();
 
@@ -130,7 +128,7 @@ function movePiece(moveObj: Move) {
 
 socket.on('update', (gameUpdate: game) => {
     if (gameUpdate._id === gameId) {
-        chess.load_pgn(gameUpdate.pgn.toString());
+        chess.load_pgn(gameUpdate.pgn);
         toolbar.player1.score = gameUpdate.player1.score;
         toolbar.player2.score = gameUpdate.player2.score;
         update();
@@ -144,7 +142,7 @@ socket.on('initialState', (gameState: game, playerColour: 'w' | 'b') => {
         colour = playerColour;
         if (colour === 'b') chessBoard.generateSquares('b');
         toolbar.set(gameState.player1, gameState.player2, colour);
-        chess.load_pgn(gameState.pgn.toString());
+        chess.load_pgn(gameState.pgn);
         app.appendChild(chessBoard.element);
         update();
     }

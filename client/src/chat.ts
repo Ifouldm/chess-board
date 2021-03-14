@@ -1,9 +1,25 @@
+const chat = document.getElementById('chat') as HTMLDivElement;
+
+const template = `<div class="row">
+            Chat:
+        </div>
+        <div class="scrollableArea">
+            <ul id="messageList" class="messageList">
+            </ul>
+        </div>
+        <div class="row">
+            <input type="text" id="message" class="textinput">
+            <button class="sm-button" id="submitMessage">+</button>
+        </div>`;
+
+chat.innerHTML = template;
+
 const messageTextfield = document.getElementById('message') as HTMLInputElement;
 const messageList = document.getElementById('messageList') as HTMLUListElement;
 const messageButton = document.getElementById('submitMessage') as HTMLButtonElement;
 
 function sendMessage(event: Event) {
-    if (event instanceof MouseEvent || event.key === 'Enter') {
+    if (event instanceof MouseEvent || (event instanceof KeyboardEvent && event.key === 'Enter')) {
         const colour = messageList.childElementCount % 2 === 0 ? 'white' : 'black';
         const messageElem = document.createElement('li');
         messageElem.className = `bubble ${colour}`;

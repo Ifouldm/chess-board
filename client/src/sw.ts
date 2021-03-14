@@ -44,4 +44,4 @@ function openPushNotification(event: NotificationEvent) {
 self.addEventListener('push', receivePushNotification);
 self.addEventListener('notificationclick', openPushNotification);
 
-export {};
+export default {};

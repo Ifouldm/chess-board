@@ -12,6 +12,14 @@ body {
     align-items: center;
 }
 
+.loading {
+    height: 90vmin;
+    width: 90vmin;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .board {
     display: grid;
     height: 90vmin;

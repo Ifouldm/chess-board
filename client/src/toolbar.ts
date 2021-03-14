@@ -1,6 +1,6 @@
 import { Chess } from './lib/chess.js';
 
-import { marioPieces as pieces } from './pieces.js';
+import { pieces } from './pieces.js';
 
 type player = { name: string, colour: string, score: number };
 
@@ -13,7 +13,71 @@ class Toolbar {
 
     player2: player;
 
-    constructor(private element: HTMLDivElement) {
+    template = `<div class="row">Status:</div>
+        <div class="row">
+            <input type="text" class="textinput" name="status" id="status" readonly>
+        </div>
+        <div class="row">
+            Turn: <span id="playerName"></span>
+            <div id="turn" class="turn light"></div>
+        </div>
+        <div class="row">Moves:</div>
+        <div class="row">
+            <div class="scrollableArea">
+                <ol id="history" reversed class="history"></ol>
+            </div>
+        </div>
+        <div class="row">
+            Promotion choice:
+        </div>
+        <div class="row">
+            <div id="promotion" class="icons">
+                <label for="bishop">
+                    <input class="selection" type="radio" id="bishop" name="promotion" value="b">
+                    <img class="img" src="#" id=bishopIcon alt="Bishop">
+                </label>
+                <label for="knight">
+                    <input class="selection" type="radio" id="knight" name="promotion" value="n">
+                    <img class="img" src="#" id=knightIcon alt="Knight">
+                </label>
+                <label for="rook">
+                    <input class="selection" type="radio" id="rook" name="promotion" value="r">
+                    <img class="img" src="#" id=rookIcon alt="Rook">
+                </label>
+                <label for="queen">
+                    <input class="selection" type="radio" id="queen" checked name="promotion" value="q">
+                    <img class="img" src="#" id=queenIcon alt="Queen">
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <button id=concedeButton class="button">Concede</button>
+        </div>
+        <div class="row">
+            <button id=offerDrawButton class="button">Offer Draw</button>
+        </div>
+        <div class="row">
+            Score:
+        </div>
+        <div class="row">
+            <div class="score">
+                <span id="p1Name"></span>:<span id="p1Score"></span>
+            </div>
+            <div class="score">
+                <span id="p2Name"></span>:<span id="p2Score"></span>
+            </div>
+        </div>
+        <div class="row">
+            Command:
+        </div>
+        <div class="row">
+            <input type="text" id="command" class="textinput">
+            <button class="sm-button" id="submitCommand">+</button>
+        </div>`;
+
+    constructor() {
+        const toolbar = document.getElementById('toolbar') as HTMLDivElement;
+        toolbar.innerHTML = this.template;
         this.colour = 'w';
         // Change the default choice for promotion
         this.promotionSelection = 'q';

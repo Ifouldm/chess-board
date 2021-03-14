@@ -1,6 +1,5 @@
 import { v4 as uuid } from 'uuid';
 import monk from 'monk';
-import { Chess } from './lib/chess.js';
 import { io } from './socketEvents';
 
 // Database Connection
@@ -54,15 +53,22 @@ async function deleteMatch(gameId: string): Promise<void> {
 }
 
 async function resetGame(gameId: string): Promise<void> {
-    const chess = new Chess();
+    // Colour selection
+    const player1Colour = Math.random() < 0.5 ? 'w' : 'b';
+    const player2Colour = player1Colour === 'w' ? 'b' : 'w';
+    await matches.update({ _id: gameId }, {
+        $set: {
+            pgn: '',
+            'player1.colour': player1Colour,
+            'player2.colour': player2Colour,
+        },
+    });
     const game: gameModel = await matches.findOne({ _id: gameId });
-    chess.load_pgn(game.pgn);
-    chess.reset();
-    game.pgn = chess.pgn();
-    matches.update({ _id: gameId }, game, { replace: true });
-    delete game.player1.id;
-    delete game.player2.id;
-    io.emit('update', game);
+    if (game) {
+        delete game.player1.id;
+        delete game.player2.id;
+        io.emit('update', game);
+    }
 }
 
 async function setScores(gameId: string, p1Score: number, p2Score: number): Promise<void> {
@@ -73,8 +79,10 @@ async function setScores(gameId: string, p1Score: number, p2Score: number): Prom
         game.player1.score = p1Score;
         game.player2.score = p2Score;
         matches.update({ _id: gameId }, {
-            $set: { player1: { score: p1Score } },
-            player2: { score: p2Score },
+            $set: {
+                'player1.score': p1Score,
+                'player2.score': p2Score,
+            },
         });
         delete game.player1.id;
         delete game.player2.id;

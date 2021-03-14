@@ -3,8 +3,6 @@ import { pieces } from './pieces.js';
 
 type piece = { type: string, color: string } | null;
 
-console.log(pieces);
-
 class Square {
     isMobile: boolean;
 
