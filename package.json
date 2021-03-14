@@ -4,7 +4,7 @@
   "description": "Chess application",
   "main": "server/build/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "mocha server/build/test/; mocha client/public/test/",
     "compile": "tsc -p client; tsc -p server",
     "serve": "concurrently \"tsc -p client -w\" \"tsc -p server -w\" \"nodemon server/build/index.js\"",
     "start": "node server/build/index.js",
@@ -27,10 +27,13 @@
     "monk": "^7.3.3",
     "socket.io": "^3.1.1",
     "uuid": "^8.3.2",
-    "web-push": "^3.4.4"
+    "web-push": "^3.4.4",
+    "chai": "^4.3.4"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.15",
     "@types/express": "^4.17.11",
+    "@types/mocha": "^8.2.1",
     "@types/socket.io": "^2.1.13",
     "@types/socket.io-client": "^1.4.35",
     "@types/uuid": "^8.3.0",
@@ -41,6 +44,7 @@
     "eslint": "^7.19.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
+    "mocha": "^8.3.2",
     "nodemon": "^2.0.7",
     "typescript": "^4.2.2"
   }

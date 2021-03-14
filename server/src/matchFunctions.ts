@@ -26,7 +26,7 @@ async function updateGame(gameId: string, pgn: string): Promise<void> {
     matches.update({ _id: gameId }, { $set: { pgn } });
 }
 
-async function createMatch(player1: string, player2: string): Promise<void> {
+async function createMatch(player1: string, player2: string): Promise<gameModel | null> {
     const player1Colour = Math.random() < 0.5 ? 'w' : 'b';
     const player2Colour = player1Colour === 'w' ? 'b' : 'w';
     const game = {
@@ -45,7 +45,9 @@ async function createMatch(player1: string, player2: string): Promise<void> {
         delete insertedGame.player1.id;
         delete insertedGame.player2.id;
         io.emit('update', insertedGame);
+        return insertedGame;
     }
+    return null;
 }
 
 async function deleteMatch(gameId: string): Promise<void> {
