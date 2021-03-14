@@ -1,15 +1,6 @@
 import { v4 as uuid } from 'uuid';
-import monk from 'monk';
-import { io } from './socketEvents';
-
-// Database Connection
-let mongoURI = 'localhost';
-if (process.env.MONGO_HOST
-&& process.env.MONGO_DB) {
-    mongoURI = `mongodb://${process.env.MONGO_HOST}/${process.env.MONGO_DB}`;
-}
-const db = monk(mongoURI, { useNewUrlParser: true });
-const matches = db.get('matches');
+import { io } from './socketEvents.js';
+import { matches, closeDB } from './database.js';
 
 type player = {id?: string, name: string, score: number, colour: 'b' | 'w'}
 type gameModel = {_id: string, player1: player, player2: player, pgn: string};
@@ -51,7 +42,8 @@ async function createMatch(player1: string, player2: string): Promise<gameModel 
 }
 
 async function deleteMatch(gameId: string): Promise<void> {
-    matches.remove({ _id: gameId });
+    const result = await matches.remove({ _id: gameId });
+    console.log(result);
 }
 
 async function resetGame(gameId: string): Promise<void> {
@@ -92,6 +84,11 @@ async function setScores(gameId: string, p1Score: number, p2Score: number): Prom
     }
 }
 
+function closeConnections() {
+    io.close();
+    closeDB();
+}
+
 export default {
-    setScores, resetGame, deleteMatch, createMatch, getGame, getGames, updateGame,
+    setScores, resetGame, deleteMatch, createMatch, getGame, getGames, updateGame, closeConnections,
 };

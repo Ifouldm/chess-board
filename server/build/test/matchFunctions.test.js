@@ -21,6 +21,11 @@ before(() => __awaiter(void 0, void 0, void 0, function* () {
         gameId = game._id;
     }
 }));
+after(() => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('after!');
+    matchFunctions_js_1.default.deleteMatch(gameId);
+    matchFunctions_js_1.default.closeConnections();
+}));
 describe('Set scores function', () => {
     it('Set score to 0-0', () => __awaiter(void 0, void 0, void 0, function* () {
         yield matchFunctions_js_1.default.setScores(gameId, 0, 0);
@@ -40,7 +45,4 @@ describe('Set scores function', () => {
         chai_1.assert.equal(result.player1.score, 5);
         chai_1.assert.equal(result.player2.score, 3);
     }));
-});
-after(() => {
-    matchFunctions_js_1.default.deleteMatch(gameId);
 });

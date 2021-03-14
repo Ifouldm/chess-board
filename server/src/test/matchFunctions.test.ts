@@ -10,6 +10,13 @@ before(async () => {
     }
 });
 
+after(async () => {
+    console.log('after!');
+
+    match.deleteMatch(gameId);
+    match.closeConnections();
+});
+
 describe('Set scores function', () => {
     it('Set score to 0-0', async () => {
         await match.setScores(gameId, 0, 0);
@@ -29,8 +36,4 @@ describe('Set scores function', () => {
         assert.equal(result.player1.score, 5);
         assert.equal(result.player2.score, 3);
     });
-});
-
-after(() => {
-    match.deleteMatch(gameId);
 });

@@ -119,6 +119,5 @@ dist
 data/db.json
 *.DS_Store
 server/build/cert/*
-server/build/*.js
-client/public/*.js
-.gitignore
+server/build/**/*.js
+client/public/**/*.js

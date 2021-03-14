@@ -1,20 +1,11 @@
 import { Request, Response } from 'express';
 import crypto from 'crypto';
 import webpush from 'web-push';
-import monk from 'monk';
 import dotenv from 'dotenv';
 import { Move } from './lib/chess.js';
+import { subscriptions } from './database.js';
 
 dotenv.config();
-
-// Database Connection
-let mongoURI = 'localhost';
-if (process.env.MONGO_HOST
-&& process.env.MONGO_DB) {
-    mongoURI = `mongodb://${process.env.MONGO_HOST}/${process.env.MONGO_DB}`;
-}
-const db = monk(mongoURI, { useNewUrlParser: true });
-const subscriptions = db.get('subscriptions');
 
 const vapidKeys = {
     privateKey: 'BrZNzaIIzDeUwroYPG9eoVFsyESeWatf5y9PWyzB2z0',

@@ -1,22 +1,11 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import monk from 'monk';
 import { handlePushNotificationSubscription } from './subscriptionHandler.js';
 import { app, httpServer } from './socketEvents.js';
+import { matches } from './database.js';
 
 // Socket events
 import './socketEvents';
 
-dotenv.config();
-
-// Database Connection
-let mongoURI = 'localhost';
-if (process.env.MONGO_HOST
-&& process.env.MONGO_DB) {
-    mongoURI = `mongodb://${process.env.MONGO_HOST}/${process.env.MONGO_DB}`;
-}
-const db = monk(mongoURI, { useNewUrlParser: true });
-const matches = db.get('matches');
 const port = process.env.PORT || 8080;
 
 // Middleware
@@ -25,7 +14,7 @@ app.use(express.json());
 app.use('/', express.static('client/public'));
 app.post('/subscription', handlePushNotificationSubscription);
 
-// Debug
+// Print 1st available match to console
 matches.findOne({}, {}, (err, doc) => {
     if (err) {
         console.error(err);
