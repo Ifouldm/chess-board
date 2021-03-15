@@ -26,7 +26,7 @@ const app = document.getElementById('app') as HTMLDivElement;
 const loading = document.getElementById('loading') as HTMLDivElement;
 
 // Audio
-const audioMove = new Audio('/assets/move.ogg');
+const audioMove = new Audio('/assets/default/move.ogg');
 
 // SocketIO
 const socket = io();
