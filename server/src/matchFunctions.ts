@@ -84,7 +84,7 @@ async function setScores(gameId: string, p1Score: number, p2Score: number): Prom
     }
 }
 
-function closeConnections() {
+function closeConnections(): void {
     io.close();
     closeDB();
 }

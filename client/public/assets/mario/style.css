@@ -1,0 +1,365 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #4089f7;
+    background-image: url('sea.png');
+}
+
+.loading {
+    height: 90vmin;
+    width: 90vmin;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.board {
+    display: grid;
+    height: 90vmin;
+    width: 90vmin;
+    margin: 5vmin;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    border: 1vmin solid black;
+}
+
+.square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2vmin;
+}
+
+.square.dark {
+    background-color: #41d41e;
+    background-image: url('grass.png');
+    color: white;
+}
+
+.square.light {
+    background-color: #f6ecb5;
+    color: black;
+}
+
+.overlay {
+    position: relative;
+}
+
+.overlay.red::after {
+    background: rgba(245, 57, 57, 0.3);
+}
+
+.overlay.purple::after {
+    background: rgba(170, 57, 245, 0.3);
+}
+
+.overlay::after {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+}
+
+.overlay:hover:after {
+    opacity: 0;
+}
+
+.piece {
+    width: 80%;
+    height: 80%;
+}
+
+.chat {
+    height: 90vmin;
+    width: 30vmin;
+    padding: 1vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f6ecb5;
+    border: 1vmin solid black;
+    border-radius: 2vmin;
+    font-size: 1.5vmin;
+}
+
+.chat .messageList {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem;
+}
+
+.chat .bubble {
+    width: 100%;
+    padding: 1vmin 1.5vmin;
+    list-style: none;
+    font-size: 1.5vmin;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.bubble.white {
+    border-bottom-left-radius: 0;
+    background: #da9961;
+    vertical-align: middle;
+    color: white;
+}
+
+.bubble.black {
+    border-bottom-right-radius: 0;
+    background-color: #f6ecb5;
+    vertical-align: middle;
+    text-align: right;
+    color: black;
+}
+
+.chat .scrollableArea {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.toolbar {
+    height: 90vmin;
+    width: 30vmin;
+    padding: 1vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f6ecb5;
+    border: 1vmin solid black;
+    border-radius: 2vmin;
+    font-size: 1.5vmin;
+}
+
+.textinput {
+    outline: none;
+    display: block;
+    background: rgba(0, 0, 0, 0.1);
+    width: 100%;
+    border: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 1vmin;
+    color: darkred;
+    font-size: 1.5vmin;
+    font-weight: bold;
+}
+
+.button {
+    outline: none;
+    background: #41d41e;
+    width: 100%;
+    border: 0;
+    border-radius: 4px;
+    padding: 1vmin;
+    color: #FFFFFF;
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 2vmin;
+    margin: 0.5vmin;
+}
+
+.sm-button {
+    outline: none;
+    background: #41d41e;
+    border: 0;
+    border-radius: 4px;
+    height: 100%;
+    padding: 0 0.5rem;
+    color: #FFFFFF;
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 2vmin;
+}
+
+.row {
+    width: 100%;
+    margin: 0.5vmin;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toolbar a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.toolbar .turn {
+    border-radius: 5px;
+    width: 3vmin;
+    height: 3vmin;
+    text-decoration: none;
+}
+
+.toolbar .turn.dark {
+    background-color: black;
+}
+
+.toolbar .turn.light {
+    background-color: white;
+    border: 2px solid #41d41e;
+}
+
+.toolbar .scrollableArea {
+    height: 30vmin;
+    width: 100%;
+    overflow-y: scroll;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.toolbar .history {
+    list-style-position: inside;
+    font-weight: bold;
+    font-size: 1.5vmin;
+}
+
+.toolbar .history .lightMove {
+    background-color: #da9961;
+    color: white;
+    padding: 1vmin 1.5vmin;
+}
+
+.toolbar .history .darkMove {
+    color: black;
+    padding: 1vmin 1.5vmin;
+}
+
+.toolbar .img {
+    width: 4vmin;
+    height: 4vmin;
+}
+
+.toolbar .selection {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toolbar .selection:checked+img {
+    outline: 0.3vmin solid #41d41e;
+}
+
+.toolbar .checkbox {
+    width: 3vmin;
+    height: 3vmin;
+}
+
+.toolbar .you {
+    font-weight: bold;
+    color: red;
+}
+
+.toolbar .score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid darkgray;
+    padding: 1vmin;
+
+    border-radius: 4px;
+}
+
+#p1Score {
+    margin-left: 1vmin;
+}
+
+#p2Score {
+    margin-left: 1vmin;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.scores {
+    height: 90vmin;
+    width: 80vmin;
+    margin: 5vmin;
+    border: 1vmin solid black;
+}
+
+table {
+    font-size: 3vmin;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-color: grey;
+    width: 100%;
+}
+
+table a {
+    color: darkgreen;
+}
+
+th {
+    padding-top: 1vmin;
+    padding-bottom: 1vmin;
+    background-color: rgb(67, 138, 73);
+    color: white;
+}
+
+td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 1vmin;
+}
+
+tr:nth-child(even) {
+    background-color: #c7b595;
+}
+
+tr:nth-child(odd) {
+    background-color: rgb(245, 235, 214);
+
+}

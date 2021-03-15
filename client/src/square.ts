@@ -1,5 +1,5 @@
 import Board from './board.js';
-import { pieces } from './pieces.js';
+import { pieces, pieceNames } from './pieces.js';
 
 type piece = { type: string, color: string } | null;
 
@@ -105,6 +105,8 @@ class Square {
     update(updatePiece: piece): void {
         if (updatePiece) {
             this.piece.src = `./assets/${pieces.get(updatePiece.type + updatePiece.color)}`;
+            this.piece.alt = `${pieceNames.get(updatePiece.type + updatePiece.color)}`;
+            this.piece.title = `${pieceNames.get(updatePiece.type + updatePiece.color)}`;
             this.piece.style.display = 'block';
         } else {
             this.piece.style.display = 'none';

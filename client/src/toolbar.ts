@@ -88,14 +88,22 @@ class Toolbar {
                 this.promotionSelection = promotionSel.value;
             }
         });
-        const queenIcon = document.getElementById('queenIcon');
-        queenIcon?.setAttribute('src', `assets/${pieces.get('qb')}`);
-        const knightIcon = document.getElementById('knightIcon');
-        knightIcon?.setAttribute('src', `assets/${pieces.get('nb')}`);
-        const bishopIcon = document.getElementById('bishopIcon');
-        bishopIcon?.setAttribute('src', `assets/${pieces.get('bb')}`);
-        const rookIcon = document.getElementById('rookIcon');
-        rookIcon?.setAttribute('src', `assets/${pieces.get('rb')}`);
+        const queenIcon = document.getElementById('queenIcon') as HTMLImageElement;
+        queenIcon.setAttribute('src', `assets/${pieces.get('qb')}`);
+        queenIcon.alt = 'Queen';
+        queenIcon.title = 'Queen';
+        const knightIcon = document.getElementById('knightIcon') as HTMLImageElement;
+        knightIcon.setAttribute('src', `assets/${pieces.get('nb')}`);
+        knightIcon.alt = 'Knight';
+        knightIcon.title = 'Knight';
+        const bishopIcon = document.getElementById('bishopIcon') as HTMLImageElement;
+        bishopIcon.setAttribute('src', `assets/${pieces.get('bb')}`);
+        bishopIcon.alt = 'Bishop';
+        bishopIcon.title = 'Bishop';
+        const rookIcon = document.getElementById('rookIcon') as HTMLImageElement;
+        rookIcon.setAttribute('src', `assets/${pieces.get('rb')}`);
+        rookIcon.alt = 'Rook';
+        rookIcon.title = 'Rook';
         this.player1 = { name: 'p1', colour: 'w', score: 0 };
         this.player2 = { name: 'p1', colour: 'w', score: 0 };
     }
