@@ -1,16 +1,11 @@
-type game = {
-    _id: string,
-    player1: { name: string, score: number, colour: string },
-    player2: { name: string, score: number, colour: string },
-    pgn: string
-};
+import { gameModel } from './types.js';
 
 class ScoreTable {
     element: HTMLTableElement;
 
     tableBody: HTMLElement;
 
-    constructor(gameList: game[]) {
+    constructor(gameList: gameModel[]) {
         this.element = document.createElement('table');
         this.element.className = 'scoretable';
         this.tableBody = document.createElement('tbody');
@@ -24,7 +19,7 @@ class ScoreTable {
         this.update(gameList);
     }
 
-    update(gameList: game[]): void {
+    update(gameList: gameModel[]): void {
         const newTableBody = document.createElement('tbody');
         gameList.forEach((gameItem) => {
             const row = document.createElement('tr');

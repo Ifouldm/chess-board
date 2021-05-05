@@ -12,7 +12,7 @@ class Board {
         this.moveFn = moveFn;
         this.chess = chess;
         this.element = document.createElement('div');
-        this.element.classList.add('board');
+        this.element.id = 'board';
         this.squares = new Map();
         this.generateSquares('w');
     }
@@ -22,21 +22,25 @@ class Board {
         const colRef = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         for (let i = 0; i < 64; i += 1) {
             const rank = colour === 'w' ? colRef[i % 8] : colRef[7 - (i % 8)];
-            const file = colour === 'w' ? 7 - Math.floor(i / 8) + 1 : Math.floor(i / 8) + 1;
+            const file =
+                colour === 'w'
+                    ? 7 - Math.floor(i / 8) + 1
+                    : Math.floor(i / 8) + 1;
             const pos = `${rank}${file}`;
             const piece = this.chess.get(pos);
-            this.squares.set(pos, new Square(
-                this,
-                piece,
+            this.squares.set(
                 pos,
-                this.chess.square_color(pos),
-            ));
+                new Square(this, piece, pos, this.chess.square_color(pos))
+            );
             this.element.appendChild(this.squares.get(pos)!.element);
         }
     }
 
     highlight(pos: string): void {
-        const moves = this.chess.moves({ square: pos, verbose: true }) as Move[];
+        const moves = this.chess.moves({
+            square: pos,
+            verbose: true,
+        }) as Move[];
         moves.forEach((move: Move) => {
             this.squares.get(move.to)?.highlight();
         });

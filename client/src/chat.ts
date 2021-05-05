@@ -1,52 +1,92 @@
-const chat = document.getElementById('chat') as HTMLDivElement;
+import { message } from './types.js';
 
-const template = `<div class="row">
-            Chat:
-        </div>
-        <div class="scrollableArea">
-            <ul id="messageList" class="messageList">
-            </ul>
-        </div>
-        <div class="row">
-            <input type="text" id="message" class="textinput">
-            <button class="sm-button" id="submitMessage">+</button>
-        </div>`;
+class Chat {
+    chat: HTMLDivElement;
 
-chat.innerHTML = template;
+    messageTextfield: HTMLInputElement;
 
-const messageTextfield = document.getElementById('message') as HTMLInputElement;
-const messageList = document.getElementById('messageList') as HTMLUListElement;
-const messageButton = document.getElementById('submitMessage') as HTMLButtonElement;
+    messageList: HTMLUListElement;
 
-function sendMessage(event: Event) {
-    if (event instanceof MouseEvent || (event instanceof KeyboardEvent && event.key === 'Enter')) {
-        const colour = messageList.childElementCount % 2 === 0 ? 'white' : 'black';
-        const messageElem = document.createElement('li');
-        messageElem.className = `bubble ${colour}`;
-        messageElem.textContent = messageTextfield.value;
-        messageTextfield.value = '';
-        messageList.appendChild(messageElem);
+    messageButton: HTMLButtonElement;
+
+    constructor(private callback: (messageOut: string) => void) {
+        const app = document.getElementById('app');
+        this.chat = document.createElement('div');
+        this.chat.id = 'chat';
+        app?.appendChild(this.chat);
+        const row = document.createElement('div');
+        row.classList.add('row');
+        row.textContent = 'Chat:';
+        this.chat.appendChild(row);
+        const scrollableArea = document.createElement('div');
+        scrollableArea.classList.add('scrollableArea');
+        this.chat.appendChild(scrollableArea);
+        this.messageList = document.createElement('ul');
+        this.messageList.classList.add('messageList');
+        this.messageList.id = 'messageList';
+        scrollableArea.appendChild(this.messageList);
+        const row2 = document.createElement('div');
+        row2.classList.add('row');
+        row2.textContent = 'Chat:';
+        this.chat.appendChild(row2);
+        this.messageTextfield = document.createElement('input');
+        this.messageTextfield.classList.add('textinput');
+        this.messageTextfield.id = 'message';
+        this.messageTextfield.type = 'text';
+        row2.appendChild(this.messageTextfield);
+        this.messageButton = document.createElement('button');
+        this.messageButton.classList.add('button', 'sm');
+        this.messageButton.id = 'submitMessage';
+        this.messageButton.textContent = '+';
+        row2.appendChild(this.messageButton);
+
+        this.messageButton.addEventListener('click', () => {
+            this.callback(this.messageTextfield.value);
+            this.messageTextfield.value = '';
+        });
+        this.messageTextfield.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                this.callback(this.messageTextfield.value);
+                this.messageTextfield.value = '';
+            }
+        });
+    }
+
+    // const template = `<div class="row">
+    //     Chat:
+    // </div>
+    // <div class="scrollableArea">
+    //     <ul id="messageList" class="messageList">
+    //     </ul>
+    // </div>
+    // <div class="row">
+    //     <input type="text" id="message" class="textinput">
+    //     <button class="button sm" id="submitMessage">+</button>
+    // </div>`;
+
+    // this.chat.innerHTML = template;
+
+    // this.messageTextfield = document.getElementById(
+    //     'message'
+    // ) as HTMLInputElement;
+    // this.messageList = document.getElementById(
+    //     'messageList'
+    // ) as HTMLUListElement;
+    // this.messageButton = document.getElementById(
+    //     'submitMessage'
+    // ) as HTMLButtonElement;
+
+    update(messages: message[]): void {
+        console.log(messages);
+
+        const messageElements = messages.map((msg) => {
+            const messageElem = document.createElement('li');
+            messageElem.className =
+                msg.playerColour === 'w' ? 'bubble white' : 'bubble black';
+            messageElem.textContent = msg.message;
+            return messageElem;
+        });
+        this.messageList.append(...messageElements);
     }
 }
-
-if (messageButton) {
-    messageButton.addEventListener('click', sendMessage);
-}
-
-if (messageTextfield && messageList) {
-    messageTextfield.addEventListener('keyup', sendMessage);
-}
-
-const messageElem1 = document.createElement('li');
-messageElem1.className = 'bubble white';
-messageElem1.textContent = 'first message';
-const messageElem2 = document.createElement('li');
-messageElem2.className = 'bubble black';
-messageElem2.textContent = 'second message';
-const messageElem3 = document.createElement('li');
-messageElem3.className = 'bubble black';
-messageElem3.textContent = 'third message';
-const messageElem4 = document.createElement('li');
-messageElem4.className = 'bubble white';
-messageElem4.textContent = 'fourth message';
-messageList.append(messageElem1, messageElem2, messageElem3, messageElem4);
+export default Chat;

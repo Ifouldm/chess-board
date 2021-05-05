@@ -93,12 +93,20 @@ io.on('connection', (socket: Socket) => {
             if (game.player1.id === token) {
                 playerName = game.player1.name;
                 playerColour = game.player1.colour;
-                match.setScores(gameId, game.player1.score, game.player2.score + 1);
+                match.setScores(
+                    gameId,
+                    game.player1.score,
+                    game.player2.score + 1
+                );
             }
             if (game.player2.id === token) {
                 playerName = game.player2.name;
                 playerColour = game.player2.colour;
-                match.setScores(gameId, game.player1.score + 1, game.player2.score);
+                match.setScores(
+                    gameId,
+                    game.player1.score + 1,
+                    game.player2.score
+                );
             }
             io.emit('concedeNotification', gameId, playerName, playerColour);
         }
@@ -123,27 +131,70 @@ io.on('connection', (socket: Socket) => {
         }
     });
 
-    socket.on('drawOfferReponse', async (gameId: string, token: string, response: boolean) => {
-        const game = await match.getGame(gameId);
-        if (!game) {
-            console.error('Error: Unknown game');
-        } else {
-            let playerName;
-            let playerColour;
-            if (game.player1.id === token) {
-                playerName = game.player1.name;
-                playerColour = game.player1.colour;
+    socket.on(
+        'drawOfferReponse',
+        async (gameId: string, token: string, response: boolean) => {
+            const game = await match.getGame(gameId);
+            if (!game) {
+                console.error('Error: Unknown game');
+            } else {
+                let playerName;
+                let playerColour;
+                if (game.player1.id === token) {
+                    playerName = game.player1.name;
+                    playerColour = game.player1.colour;
+                }
+                if (game.player2.id === token) {
+                    playerName = game.player2.name;
+                    playerColour = game.player2.colour;
+                }
+                if (response && playerName && playerColour) {
+                    match.setScores(
+                        gameId,
+                        game.player1.score + 0.5,
+                        game.player2.score + 0.5
+                    );
+                }
+                io.emit(
+                    'drawNotification',
+                    gameId,
+                    response,
+                    playerColour,
+                    playerName
+                );
             }
-            if (game.player2.id === token) {
-                playerName = game.player2.name;
-                playerColour = game.player2.colour;
-            }
-            if (response && playerName && playerColour) {
-                match.setScores(gameId, game.player1.score + 0.5, game.player2.score + 0.5);
-            }
-            io.emit('drawNotification', gameId, response, playerColour, playerName);
         }
-    });
+    );
+
+    socket.on(
+        'message',
+        async (gameId: string, token: string, message: string) => {
+            const game = await match.getGame(gameId);
+            if (!game) {
+                console.error('Error: Unknown game');
+            } else {
+                let playerName;
+                let playerColour;
+                if (game.player1.id === token) {
+                    playerName = game.player1.name;
+                    playerColour = game.player1.colour;
+                }
+                if (game.player2.id === token) {
+                    playerName = game.player2.name;
+                    playerColour = game.player2.colour;
+                }
+
+                const newMessage = {
+                    playerName,
+                    playerColour,
+                    message,
+                    dateTime: Date.now(),
+                };
+
+                await match.addMessage(gameId, newMessage);
+            }
+        }
+    );
 });
 
 export { httpServer, io, app };

@@ -1,7 +1,6 @@
 import Board from './board.js';
 import { pieces, pieceNames } from './pieces.js';
-
-type piece = { type: string, color: string } | null;
+import { piece } from './types.js';
 
 class Square {
     isMobile: boolean;
@@ -16,7 +15,7 @@ class Square {
         private board: Board,
         currentPiece: piece,
         pos: string,
-        sqColor: string,
+        sqColor: string
     ) {
         this.isMobile = /Mobi/i.test(navigator.userAgent);
         this.element = document.createElement('div');
@@ -35,62 +34,88 @@ class Square {
     addEventListeners(pos: string): void {
         const { board } = this;
         if (this.isMobile) {
-            this.element.addEventListener('click', () => {
-                if (!board.selected) {
-                    board.highlight(pos);
-                    board.selected = pos;
-                } else if (board.selected === pos) {
-                    board.clearHighlighting();
-                    board.selected = '';
-                } else {
-                    board.clearHighlighting();
-                    const move = {
-                        from: board.selected,
-                        to: pos,
-                    };
-                    board.selected = '';
-                    board.move(move);
-                }
-            }, false);
+            this.element.addEventListener(
+                'click',
+                () => {
+                    if (!board.selected) {
+                        board.highlight(pos);
+                        board.selected = pos;
+                    } else if (board.selected === pos) {
+                        board.clearHighlighting();
+                        board.selected = '';
+                    } else {
+                        board.clearHighlighting();
+                        const move = {
+                            from: board.selected,
+                            to: pos,
+                        };
+                        board.selected = '';
+                        board.move(move);
+                    }
+                },
+                false
+            );
         } else {
-            this.element.addEventListener('dragstart', (event) => {
-                board.highlight(pos);
-                event.dataTransfer?.setData('text/plain', pos);
-            }, false);
-            this.element.addEventListener('dragover', (event) => {
-                event.preventDefault();
-            }, false);
-            this.element.addEventListener('dragenter', (event) => {
-                // highlight potential drop target when the draggable element enters it
-                event.preventDefault();
-                if (event.target) {
-                    const square = event.target as HTMLElement;
-                    square.classList.add('overlay', 'red');
-                }
-            }, false);
-            this.element.addEventListener('dragleave', (event) => {
-                // clear highlight from drop target when the draggable element leaves it
-                event.preventDefault();
-                if (event.target) {
-                    const square = event.target as HTMLElement;
-                    square.classList.remove('overlay', 'red');
-                }
-            }, false);
-            this.element.addEventListener('drop', (event) => {
-                event.preventDefault();
-                if (event.target && event.dataTransfer) {
-                    const square = event.target as HTMLElement;
-                    square.classList.remove('overlay', 'red');
-                    const from = event.dataTransfer.getData('text/plain');
-                    const to = pos;
-                    const move = {
-                        from,
-                        to,
-                    };
-                    this.board.move(move);
-                }
-            }, false);
-            this.element.addEventListener('dragend', () => this.board.clearHighlighting());
+            this.element.addEventListener(
+                'dragstart',
+                (event) => {
+                    board.highlight(pos);
+                    event.dataTransfer?.setData('text/plain', pos);
+                },
+                false
+            );
+            this.element.addEventListener(
+                'dragover',
+                (event) => {
+                    event.preventDefault();
+                },
+                false
+            );
+            this.element.addEventListener(
+                'dragenter',
+                (event) => {
+                    // highlight potential drop target when the draggable element enters it
+                    event.preventDefault();
+                    if (event.target) {
+                        const square = event.target as HTMLElement;
+                        square.classList.add('overlay', 'red');
+                    }
+                },
+                false
+            );
+            this.element.addEventListener(
+                'dragleave',
+                (event) => {
+                    // clear highlight from drop target when the draggable element leaves it
+                    event.preventDefault();
+                    if (event.target) {
+                        const square = event.target as HTMLElement;
+                        square.classList.remove('overlay', 'red');
+                    }
+                },
+                false
+            );
+            this.element.addEventListener(
+                'drop',
+                (event) => {
+                    event.preventDefault();
+                    if (event.target && event.dataTransfer) {
+                        const square = event.target as HTMLElement;
+                        square.classList.remove('overlay', 'red');
+                        const from = event.dataTransfer.getData('text/plain');
+                        const to = pos;
+                        const move = {
+                            from,
+                            to,
+                        };
+                        this.board.move(move);
+                    }
+                },
+                false
+            );
+            this.element.addEventListener('dragend', () =>
+                this.board.clearHighlighting()
+            );
         }
     }
 
@@ -104,9 +129,15 @@ class Square {
 
     update(updatePiece: piece): void {
         if (updatePiece) {
-            this.piece.src = `./assets/${pieces.get(updatePiece.type + updatePiece.color)}`;
-            this.piece.alt = `${pieceNames.get(updatePiece.type + updatePiece.color)}`;
-            this.piece.title = `${pieceNames.get(updatePiece.type + updatePiece.color)}`;
+            this.piece.src = `./assets/${pieces.get(
+                updatePiece.type + updatePiece.color
+            )}`;
+            this.piece.alt = `${pieceNames.get(
+                updatePiece.type + updatePiece.color
+            )}`;
+            this.piece.title = `${pieceNames.get(
+                updatePiece.type + updatePiece.color
+            )}`;
             this.piece.style.display = 'block';
         } else {
             this.piece.style.display = 'none';

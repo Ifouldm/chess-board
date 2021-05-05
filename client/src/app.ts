@@ -11,19 +11,15 @@ import {
     getUserSubscription,
     createNotificationSubscription,
 } from './push-notifications.js';
-import './chat.js';
+import Loading from './loading.js';
+import Chat from './chat.js';
+import { gameModel, message } from './types.js';
 
-// Types
-type game = {
-_id: string,
-player1: { name: string, score: number, colour: 'w' | 'b' },
-player2: { name: string, score: number, colour: 'w' | 'b' },
-pgn: string
-};
-
-// DOM elements
+// Build UI
 const app = document.getElementById('app') as HTMLDivElement;
-const loading = document.getElementById('loading') as HTMLDivElement;
+const loadingElement = new Loading();
+const loading = loadingElement.getElement();
+const chat = new Chat(submitMessage);
 
 // Audio
 const audioMove = new Audio('/assets/default/move.ogg');
@@ -44,7 +40,6 @@ function getParameterByName(name: string, url = window.location.href) {
 // Query parameters & globals
 const gameId = getParameterByName('gameId');
 const token = getParameterByName('token');
-let playerNo: 1 | 2;
 let playerColour: 'w' | 'b' | null;
 
 socket.emit('auth', gameId, token);
@@ -110,7 +105,9 @@ if (commandField) {
         }
     });
 }
-const commandButton = document.getElementById('submitCommand') as HTMLButtonElement;
+const commandButton = document.getElementById(
+    'submitCommand'
+) as HTMLButtonElement;
 if (commandButton) {
     commandButton.addEventListener('click', () => {
         socket.emit('command', commandField.value, token);
@@ -127,7 +124,11 @@ function movePiece(moveObj: Move) {
     }
 }
 
-socket.on('update', (gameUpdate: game) => {
+function submitMessage(messageOut: string) {
+    socket.emit('message', gameId, token, messageOut);
+}
+
+socket.on('update', (gameUpdate: gameModel) => {
     if (gameUpdate._id === gameId) {
         chess.load_pgn(gameUpdate.pgn);
         toolbar.player1.score = gameUpdate.player1.score;
@@ -138,11 +139,10 @@ socket.on('update', (gameUpdate: game) => {
     }
 });
 
-socket.on('initialState', (gameState: game, pColour: 'w' | 'b' | null, pNo: 1 | 2) => {
+socket.on('initialState', (gameState: gameModel, pColour: 'w' | 'b' | null) => {
     if (gameState._id === gameId) {
         loading.style.display = 'none';
         playerColour = pColour;
-        playerNo = pNo;
         if (playerColour === 'b') chessBoard.generateSquares('b');
         toolbar.set(gameState.player1, gameState.player2, playerColour);
         chess.load_pgn(gameState.pgn);
@@ -151,33 +151,61 @@ socket.on('initialState', (gameState: game, pColour: 'w' | 'b' | null, pNo: 1 | 
     }
 });
 
-socket.on('concedeNotification', (gameRef: string, playerName: string, concedeColour: 'w' | 'b') => {
-    if (gameRef === gameId && concedeColour !== playerColour) {
-        modal.show(`${playerName} conceded, ok to accept`);
+socket.on(
+    'concedeNotification',
+    (gameRef: string, playerName: string, concedeColour: 'w' | 'b') => {
+        if (gameRef === gameId && concedeColour !== playerColour) {
+            modal.show(`${playerName} conceded, ok to accept`);
+        }
     }
-});
+);
 
-socket.on('drawOffer', (gameRef: string, playerName: string, drawColour: 'w' | 'b') => {
-    if (gameRef === gameId && drawColour !== playerColour) {
-        modal.show(`${playerName} offered a draw, ok to accept, cancel to deny`, () => {
-            socket.emit('drawOfferReponse', gameId, token, true);
-        }, () => {
-            socket.emit('drawOfferReponse', gameId, token, false);
-        });
+socket.on(
+    'drawOffer',
+    (gameRef: string, playerName: string, drawColour: 'w' | 'b') => {
+        if (gameRef === gameId && drawColour !== playerColour) {
+            modal.show(
+                `${playerName} offered a draw, ok to accept, cancel to deny`,
+                () => {
+                    socket.emit('drawOfferReponse', gameId, token, true);
+                },
+                () => {
+                    socket.emit('drawOfferReponse', gameId, token, false);
+                }
+            );
+        }
     }
-});
+);
 
-socket.on('drawNotification', (gameRef: string, accepted: boolean, resColour: 'w' | 'b', resName: string) => {
-    if (gameRef === gameId && resColour !== playerColour) {
-        modal.show(`${resName} ${accepted ? 'accepted' : 'declined'} a draw, ok to continue`);
+socket.on(
+    'drawNotification',
+    (
+        gameRef: string,
+        accepted: boolean,
+        resColour: 'w' | 'b',
+        resName: string
+    ) => {
+        if (gameRef === gameId && resColour !== playerColour) {
+            modal.show(
+                `${resName} ${
+                    accepted ? 'accepted' : 'declined'
+                } a draw, ok to continue`
+            );
+        }
     }
-});
+);
 
-socket.on('gameList', (gameList: game[]) => {
+socket.on('gameList', (gameList: gameModel[]) => {
     loading.style.display = 'none';
     const scoreDiv = document.createElement('div');
     const scoreTable = new ScoreTable(gameList);
     scoreDiv.appendChild(scoreTable.element);
-    scoreDiv.className = 'scores';
+    scoreDiv.id = 'scores';
     app.appendChild(scoreDiv);
+});
+
+socket.on('chatMessage', (gameRef: string, messages: message[]) => {
+    if (gameRef === gameId) {
+        chat.update(messages);
+    }
 });

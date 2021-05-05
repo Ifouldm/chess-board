@@ -14,12 +14,19 @@ class Modal {
         </div>`;
 
     constructor() {
-        this.modal = document.getElementById('confirmModal') as HTMLDivElement;
+        const app = document.getElementById('app');
+        this.modal = document.createElement('div') as HTMLDivElement;
+        this.modal.id = 'modal';
+        app?.appendChild(this.modal);
         this.modal.innerHTML = this.template;
         this.text = document.getElementById('modalText') as HTMLElement;
         const ok = document.getElementById('modalOk') as HTMLButtonElement;
-        const cancel = document.getElementById('modalCancel') as HTMLButtonElement;
-        const close = this.modal.getElementsByClassName('close').item(0) as HTMLSpanElement;
+        const cancel = document.getElementById(
+            'modalCancel'
+        ) as HTMLButtonElement;
+        const close = this.modal
+            .getElementsByClassName('close')
+            .item(0) as HTMLSpanElement;
         close.onclick = () => {
             this.modal.style.display = 'none';
             if (this.cancelFn) this.cancelFn();
@@ -40,7 +47,11 @@ class Modal {
         };
     }
 
-    show(dialogText: string, okFn?: () => boolean|void, cancelFn?: () => boolean|void): void {
+    show(
+        dialogText: string,
+        okFn?: () => boolean | void,
+        cancelFn?: () => boolean | void
+    ): void {
         this.text.textContent = dialogText;
         this.modal.style.display = 'block';
         this.okFn = okFn;

@@ -1,4 +1,4 @@
-FROM node
+FROM node:alpine
 
 WORKDIR /app
 
@@ -9,8 +9,6 @@ RUN npm install
 COPY . .
 
 RUN npm run compile
-
-COPY .env .
 
 ENV PORT=3000
 
