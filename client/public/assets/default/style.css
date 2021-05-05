@@ -356,12 +356,13 @@ tr:nth-child(odd) {
     #board {
         order: 1;
         width: 100%;
-        margin: 0;
+        margin: 0 0 1rem 0;
     }
 
     #toolbar {
         order: 2;
         width: 100%;
+        margin-bottom: 1rem;
     }
 
     #chat {

@@ -13,9 +13,9 @@ type gameModel = {
 };
 type message = {
     playerName: string;
-    colour: 'b' | 'w';
+    playerColour: 'b' | 'w';
     message: string;
-    dateTime: Date;
+    dateTime: number;
 };
 
 export { player, gameModel, message };

@@ -15,6 +15,10 @@ io.on('connection', (socket: Socket) => {
             const parts = command.split(' ');
             match.createMatch(parts[1], parts[2]);
         }
+        if (command.startsWith('clear')) {
+            const parts = command.split(' ');
+            match.clearMessages(parts[1]);
+        }
         if (command.startsWith('reset')) {
             const parts = command.split(' ');
             match.resetGame(parts[1]);
@@ -184,14 +188,15 @@ io.on('connection', (socket: Socket) => {
                     playerColour = game.player2.colour;
                 }
 
-                const newMessage = {
-                    playerName,
-                    playerColour,
-                    message,
-                    dateTime: Date.now(),
-                };
-
-                await match.addMessage(gameId, newMessage);
+                if (playerName && playerColour) {
+                    const newMessage = {
+                        playerName,
+                        playerColour,
+                        message,
+                        dateTime: Date.now(),
+                    };
+                    await match.addMessage(gameId, newMessage);
+                }
             }
         }
     );

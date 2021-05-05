@@ -77,8 +77,7 @@ class Chat {
     // ) as HTMLButtonElement;
 
     update(messages: message[]): void {
-        console.log(messages);
-
+        this.messageList.innerHTML = '';
         const messageElements = messages.map((msg) => {
             const messageElem = document.createElement('li');
             messageElem.className =

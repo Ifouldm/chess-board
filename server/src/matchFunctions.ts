@@ -111,15 +111,33 @@ async function addMessage(gameId: string, messageIn: message): Promise<void> {
     if (!game) {
         console.error('Error: Unknown game');
     } else {
+        const currMsgs = game.messages ?? [];
         matches.update(
             { _id: gameId },
             {
                 $set: {
-                    messages: [...game.messages, messageIn],
+                    messages: [...currMsgs, messageIn],
                 },
             }
         );
-        io.emit('chatMessages', [...game.messages, messageIn]);
+        io.emit('chatMessage', gameId, [...game.messages, messageIn]);
+    }
+}
+
+async function clearMessages(gameId: string): Promise<void> {
+    const game = await getGame(gameId);
+    if (!game) {
+        console.error('Error: Unknown game');
+    } else {
+        matches.update(
+            { _id: gameId },
+            {
+                $set: {
+                    messages: [],
+                },
+            }
+        );
+        io.emit('chatMessage', gameId, []);
     }
 }
 
@@ -130,6 +148,7 @@ function closeConnections(): void {
 
 export default {
     addMessage,
+    clearMessages,
     setScores,
     resetGame,
     deleteMatch,

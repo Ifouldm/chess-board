@@ -147,6 +147,7 @@ socket.on('initialState', (gameState: gameModel, pColour: 'w' | 'b' | null) => {
         toolbar.set(gameState.player1, gameState.player2, playerColour);
         chess.load_pgn(gameState.pgn);
         app.appendChild(chessBoard.element);
+        chat.update(gameState.messages);
         update();
     }
 });
